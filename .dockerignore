@@ -58,6 +58,7 @@ test_*.py
 # Backup files
 *.backup
 *.bak
+*_backup.py
 
 # Documentation
 *.md
