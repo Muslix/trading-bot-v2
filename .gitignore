@@ -1,0 +1,123 @@
+# Crypto Trading Bot 24/7 - Git Ignore File
+
+# =============================================================================
+# SENSITIVE DATA - NEVER COMMIT!
+# =============================================================================
+.env
+.env.local
+.env.production
+production_config.json
+
+# Bot tokens and API keys
+*token*
+*secret*
+*key*
+
+# Chat IDs and personal data
+chat_id.txt
+
+# =============================================================================
+# DATABASE FILES
+# =============================================================================
+*.db
+*.sqlite
+*.sqlite3
+
+# Database backups
+backups/
+*.backup
+
+# =============================================================================
+# LOGS & TEMPORARY FILES
+# =============================================================================
+*.log
+logs/
+temp/
+tmp/
+
+# Deployment logs
+deployment_log_*.txt
+
+# Test reports
+test_report_*.json
+
+# =============================================================================
+# PYTHON
+# =============================================================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv/
+
+# =============================================================================
+# IDE & EDITOR FILES
+# =============================================================================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# =============================================================================
+# OPERATING SYSTEM
+# =============================================================================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# =============================================================================
+# PYTEST
+# =============================================================================
+.pytest_cache/
+.coverage
+htmlcov/
+
+# =============================================================================
+# NODE.JS (if using npm/yarn for frontend)
+# =============================================================================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# =============================================================================
+# PRODUCTION FILES
+# =============================================================================
+# Keep these but mark as sensitive
+# production_config.json - already in sensitive section
+pid.lock
+*.pid
+
+# SSL certificates (if used)
+*.pem
+*.key
+*.crt

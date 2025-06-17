@@ -1,0 +1,17 @@
+[Unit]
+Description=Crypto Trading Bot Web API
+After=network.target
+
+[Service]
+Type=simple
+User=muslix
+WorkingDirectory=/home/muslix/trading_bot_v2
+Environment=PYTHONPATH=/home/muslix/trading_bot_v2
+ExecStart=/usr/bin/python3 /home/muslix/trading_bot_v2/src/web_api.py
+Restart=always
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

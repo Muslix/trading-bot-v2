@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crypto Trading Bot 24/7 - Dashboard</title>
+    
+    <!-- Vue.js 3 -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <style>
+        :root {
+            --primary-color: #2C3E50;
+            --secondary-color: #3498DB;
+            --success-color: #27AE60;
+            --warning-color: #F39C12;
+            --danger-color: #E74C3C;
+            --dark-bg: #1a1a1a;
+            --card-bg: #ffffff;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .navbar {
+            background: rgba(255, 255, 255, 0.95) !important;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+        }
+
+        .stats-card {
+            text-align: center;
+            padding: 1.5rem;
+        }
+
+        .stats-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin: 0;
+        }
+
+        .stats-label {
+            color: #6c757d;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .live-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            background: var(--success-color);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+            margin-right: 8px;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .price-table {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+        }
+
+        .table th {
+            border-top: none;
+            background: rgba(52, 152, 219, 0.1);
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .profit-positive {
+            color: var(--success-color);
+            font-weight: bold;
+        }
+
+        .profit-negative {
+            color: var(--danger-color);
+            font-weight: bold;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 20px;
+        }
+
+        .status-online {
+            color: var(--success-color);
+        }
+
+        .status-offline {
+            color: var(--danger-color);
+        }
+
+        .btn-refresh {
+            background: var(--secondary-color);
+            border: none;
+            border-radius: 25px;
+            padding: 8px 20px;
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .btn-refresh:hover {
+            background: #2980b9;
+            transform: scale(1.05);
+        }
+
+        .alert-item {
+            border-left: 4px solid var(--warning-color);
+            margin-bottom: 10px;
+        }
+
+        .footer {
+            margin-top: 50px;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        @media (max-width: 768px) {
+            .stats-number {
+                font-size: 2rem;
+            }
+            
+            .card {
+                margin-bottom: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <!-- Navigation -->
+        <nav class="navbar navbar-expand-lg navbar-light fixed-top">
+            <div class="container">
+                <a class="navbar-brand" href="#">
+                    <strong>🤖 Crypto Trading Bot 24/7</strong>
+                </a>
+                <div class="navbar-nav ms-auto">
+                    <span class="nav-link">
+                        <span :class="isOnline ? 'live-indicator' : ''"></span>
+                        <span :class="isOnline ? 'status-online' : 'status-offline'">
+                            {{ isOnline ? 'LIVE' : 'OFFLINE' }}
+                        </span>
+                    </span>
+                    <button class="btn btn-refresh ms-2" @click="refreshData">
+                        🔄 Refresh
+                    </button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <div class="container" style="margin-top: 100px;">
+            
+            <!-- Statistics Cards -->
+            <div class="row mb-4">
+                <div class="col-md-3 col-6 mb-3">
+                    <div class="card stats-card">
+                        <h3 class="stats-number text-primary">{{ dashboardData.arbitrage.total_alerts || 0 }}</h3>
+                        <p class="stats-label">Arbitrage Alerts (24h)</p>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6 mb-3">
+                    <div class="card stats-card">
+                        <h3 class="stats-number text-success">{{ (dashboardData.arbitrage.avg_profit || 0).toFixed(1) }}%</h3>
+                        <p class="stats-label">Avg. Arbitrage Profit</p>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6 mb-3">
+                    <div class="card stats-card">
+                        <h3 class="stats-number text-info">{{ dashboardData.performance.total_coins || 0 }}</h3>
+                        <p class="stats-label">Analyzed Coins</p>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6 mb-3">
+                    <div class="card stats-card">
+                        <h3 class="stats-number text-warning">{{ (dashboardData.performance.max_sharpe || 0).toFixed(2) }}</h3>
+                        <p class="stats-label">Best Sharpe Ratio</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Live Prices & Arbitrage -->
+            <div class="row mb-4">
+                <div class="col-lg-8">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">💰 Live Preise & Arbitrage Möglichkeiten</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Symbol</th>
+                                            <th>Binance</th>
+                                            <th>Coinbase</th>
+                                            <th>Kraken</th>
+                                            <th>Arbitrage</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr v-for="price in livePrices" :key="price.symbol">
+                                            <td><strong>{{ price.symbol }}</strong></td>
+                                            <td>${{ price.binance?.toLocaleString() || 'N/A' }}</td>
+                                            <td>${{ price.coinbase?.toLocaleString() || 'N/A' }}</td>
+                                            <td>${{ price.kraken?.toLocaleString() || 'N/A' }}</td>
+                                            <td>
+                                                <span :class="price.arbitrage > 1 ? 'profit-positive' : 'text-muted'">
+                                                    {{ price.arbitrage > 1 ? `+${price.arbitrage.toFixed(1)}%` : 'No Opportunity' }}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Alerts -->
+                <div class="col-lg-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">🚨 Recent Alerts</h5>
+                        </div>
+                        <div class="card-body" style="max-height: 400px; overflow-y: auto;">
+                            <div v-for="alert in filteredAlerts" :key="alert.id" class="alert alert-item" 
+                                 :class="{'alert-success': alert.profit_percentage >= 2, 'alert-warning': alert.profit_percentage >= 1 && alert.profit_percentage < 2, 'alert-secondary': alert.profit_percentage < 1}">
+                                <small class="text-muted">{{ formatTime(alert.timestamp) }}</small><br>
+                                <strong>{{ alert.symbol }}</strong><br>
+                                <span class="profit-positive" v-if="alert.profit_percentage >= 1">{{ alert.profit_percentage.toFixed(1) }}% profit</span>
+                                <span class="text-muted" v-else>{{ alert.profit_percentage.toFixed(1) }}% profit</span><br>
+                                <small>{{ alert.buy_exchange }} → {{ alert.sell_exchange }}</small>
+                            </div>
+                            <div v-if="filteredAlerts.length === 0" class="text-center text-muted">
+                                <p>Keine signifikanten Alerts (≥1.0%) in den letzten 24h</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Performance Chart -->
+            <div class="row mb-4">
+                <div class="col-lg-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">📈 Top Performer (Sharpe Ratio)</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart-container">
+                                <canvas id="sharpeChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Price History Chart -->
+                <div class="col-lg-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">💹 Price History (BTC/USDT)</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart-container">
+                                <canvas id="priceChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Performance Table -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">🏆 Cryptocurrencies Performance ({{ filteredPerformers.length }} / {{ allPerformers.length }})</h5>
+                            <div class="d-flex gap-2">
+                                <input type="text" class="form-control form-control-sm" style="width: 200px;" 
+                                       v-model="searchFilter" placeholder="Search coins..." />
+                                <select class="form-select form-select-sm" style="width: 150px;" v-model="performanceFilter">
+                                    <option value="all">All Coins</option>
+                                    <option value="positive">Positive Sharpe</option>
+                                    <option value="top20">Top 20</option>
+                                    <option value="top50">Top 50</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive" style="max-height: 600px; overflow-y: auto;">
+                                <table class="table table-hover table-sm">
+                                    <thead class="sticky-top" style="background: rgba(255,255,255,0.95);">
+                                        <tr>
+                                            <th>Rank</th>
+                                            <th>Symbol</th>
+                                            <th>Sharpe Ratio</th>
+                                            <th>Annual Return</th>
+                                            <th>Current Price</th>
+                                            <th>Last Updated</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr v-for="(crypto, index) in filteredPerformers" :key="crypto.symbol">
+                                            <td>{{ index + 1 }}</td>
+                                            <td><strong>{{ crypto.symbol }}</strong></td>
+                                            <td>
+                                                <span :class="crypto.sharpe_ratio > 1 ? 'profit-positive' : crypto.sharpe_ratio > 0 ? 'text-warning' : 'profit-negative'">
+                                                    {{ crypto.sharpe_ratio.toFixed(3) }}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <span :class="crypto.annual_return > 0 ? 'profit-positive' : 'profit-negative'">
+                                                    {{ crypto.annual_return > 0 ? '+' : '' }}{{ crypto.annual_return.toFixed(1) }}%
+                                                </span>
+                                            </td>
+                                            <td>${{ crypto.current_price.toLocaleString() }}</td>
+                                            <td>{{ formatTime(crypto.timestamp) }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <div class="container">
+                <p>&copy; 2024 Crypto Trading Bot 24/7 | Last Update: {{ lastUpdate }}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Vue.js App -->
+    <script>
+        const { createApp } = Vue;
+
+        createApp({
+            data() {
+                return {
+                    isOnline: true,
+                    lastUpdate: new Date().toLocaleString(),
+                    dashboardData: {
+                        arbitrage: { total_alerts: 0, avg_profit: 0, max_profit: 0 },
+                        performance: { total_coins: 0, avg_sharpe: 0, max_sharpe: 0 },
+                        telegram: { total_messages: 0, successful_messages: 0 }
+                    },
+                    livePrices: [
+                        { symbol: 'BTC/USDT', binance: 108650, coinbase: 108700, kraken: 108675, arbitrage: 0.05 },
+                        { symbol: 'ETH/USDT', binance: 2658, coinbase: 2660, kraken: 2659, arbitrage: 0.08 },
+                        { symbol: 'BNB/USDT', binance: 658, coinbase: 310, kraken: 658, arbitrage: 112.26 },
+                        { symbol: 'ADA/USDT', binance: 0.65, coinbase: 0.65, kraken: 0.65, arbitrage: 0.00 },
+                        { symbol: 'DOT/USDT', binance: 3.98, coinbase: 3.98, kraken: 3.98, arbitrage: 0.00 }
+                    ],
+                    recentAlerts: [
+                        {
+                            id: 1,
+                            timestamp: new Date().toISOString(),
+                            symbol: 'BNB/USDT',
+                            buy_exchange: 'coinbase',
+                            sell_exchange: 'binance',
+                            profit_percentage: 112.26
+                        }
+                    ],
+                    topPerformers: [
+                        { symbol: 'SOL', sharpe_ratio: 1.719, annual_return: 155.8, current_price: 157.27, timestamp: new Date().toISOString() },
+                        { symbol: 'WBTC', sharpe_ratio: 1.660, annual_return: 82.4, current_price: 108487.46, timestamp: new Date().toISOString() },
+                        { symbol: 'BTC', sharpe_ratio: 1.654, annual_return: 82.6, current_price: 108643.56, timestamp: new Date().toISOString() },
+                        { symbol: 'LEO', sharpe_ratio: 1.374, annual_return: 55.4, current_price: 9.21, timestamp: new Date().toISOString() },
+                        { symbol: 'AAVE', sharpe_ratio: 1.356, annual_return: 131.8, current_price: 288.02, timestamp: new Date().toISOString() }
+                    ],
+                    allPerformers: [], // All analyzed coins
+                    searchFilter: '',
+                    performanceFilter: 'all',
+                    charts: {
+                        sharpe: null,
+                        price: null
+                    }
+                }
+            },
+            computed: {
+                filteredAlerts() {
+                    // Filtere nur Alerts mit Profit >= 1.0%
+                    return this.recentAlerts
+                        .filter(alert => alert.profit_percentage >= 1.0)
+                        .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
+                        .slice(0, 10); // Top 10 profitable alerts
+                },
+                filteredPerformers() {
+                    let performers = this.allPerformers.length > 0 ? this.allPerformers : this.topPerformers;
+                    
+                    // Text search filter
+                    if (this.searchFilter) {
+                        performers = performers.filter(p => 
+                            p.symbol.toLowerCase().includes(this.searchFilter.toLowerCase())
+                        );
+                    }
+                    
+                    // Performance filter
+                    switch (this.performanceFilter) {
+                        case 'positive':
+                            performers = performers.filter(p => p.sharpe_ratio > 0);
+                            break;
+                        case 'top20':
+                            performers = performers.slice(0, 20);
+                            break;
+                        case 'top50':
+                            performers = performers.slice(0, 50);
+                            break;
+                        default:
+                            // 'all' - no additional filtering
+                            break;
+                    }
+                    
+                    return performers;
+                }
+            },
+            mounted() {
+                console.log('🚀 Dashboard mounted, loading initial data...');
+                this.refreshData(); // Initial data load
+                this.initCharts();
+                this.startDataRefresh();
+            },
+            methods: {
+                async refreshData() {
+                    try {
+                        console.log('Refreshing data from API...');
+                        
+                        // Dashboard Data
+                        const dashboardResponse = await fetch('/api/dashboard-data');
+                        if (dashboardResponse.ok) {
+                            const dashboardResult = await dashboardResponse.json();
+                            if (dashboardResult.success) {
+                                this.dashboardData = dashboardResult.data;
+                                this.isOnline = dashboardResult.data.bot_status?.is_online || true;
+                            }
+                        }
+                        
+                        // Live Prices
+                        const pricesResponse = await fetch('/api/live-prices');
+                        if (pricesResponse.ok) {
+                            const pricesResult = await pricesResponse.json();
+                            if (pricesResult.success && pricesResult.data.length > 0) {
+                                this.livePrices = pricesResult.data;
+                            }
+                        }
+                        
+                        // Recent Alerts
+                        const alertsResponse = await fetch('/api/arbitrage-alerts');
+                        if (alertsResponse.ok) {
+                            const alertsResult = await alertsResponse.json();
+                            console.log('🚨 Arbitrage Alerts Response:', alertsResult);
+                            if (alertsResult.success && alertsResult.data) {
+                                this.recentAlerts = alertsResult.data.slice(0, 10); // Last 10 alerts
+                                console.log('📝 Recent Alerts updated:', this.recentAlerts.length, 'alerts');
+                            } else {
+                                console.warn('⚠️ No alerts data received or success=false');
+                                this.recentAlerts = [];
+                            }
+                        } else {
+                            console.error('❌ Failed to fetch arbitrage alerts:', alertsResponse.status);
+                            this.recentAlerts = [];
+                        }
+                        
+                        // Performance Data
+                        const performanceResponse = await fetch('/api/performance-data');
+                        if (performanceResponse.ok) {
+                            const performanceResult = await performanceResponse.json();
+                            if (performanceResult.success && performanceResult.data) {
+                                console.log('📊 Performance Data:', performanceResult.data.length, 'coins');
+                                // Store all performance data
+                                this.allPerformers = performanceResult.data.sort((a, b) => b.sharpe_ratio - a.sharpe_ratio);
+                                // Keep top performers for charts (top 10)
+                                this.topPerformers = this.allPerformers.slice(0, 10);
+                                console.log('📈 All Performers loaded:', this.allPerformers.length, 'coins');
+                            } else {
+                                console.warn('⚠️ No performance data received');
+                                this.allPerformers = [];
+                            }
+                        } else {
+                            console.error('❌ Failed to fetch performance data:', performanceResponse.status);
+                            this.allPerformers = [];
+                        }
+                        
+                        // Update timestamp
+                        this.lastUpdate = new Date().toLocaleString();
+                        this.updateCharts();
+                        
+                        console.log('✅ Data refreshed successfully');
+                        
+                    } catch (error) {
+                        console.error('❌ Error refreshing data:', error);
+                        this.isOnline = false;
+                        
+                        // Fallback zu Demo-Daten wenn API nicht verfügbar
+                        this.useDemoData();
+                    }
+                },
+                
+                useDemoData() {
+                    console.log('📱 Using demo data (API not available)');
+                    // Simuliere kleine Änderungen für Demo
+                    this.livePrices.forEach(price => {
+                        const variation = (Math.random() - 0.5) * 0.02; // ±1% Variation
+                        if (price.binance) price.binance *= (1 + variation);
+                        if (price.coinbase) price.coinbase *= (1 + variation);
+                        if (price.kraken) price.kraken *= (1 + variation);
+                        
+                        // Berechne Arbitrage neu
+                        const prices = [price.binance, price.coinbase, price.kraken].filter(p => p);
+                        if (prices.length >= 2) {
+                            const max = Math.max(...prices);
+                            const min = Math.min(...prices);
+                            price.arbitrage = ((max - min) / min) * 100;
+                        }
+                    });
+                    
+                    this.updateCharts();
+                },
+                
+                startDataRefresh() {
+                    // Auto-refresh alle 5 Sekunden
+                    setInterval(() => {
+                        this.refreshData();
+                    }, 5000);
+                },
+                
+                formatTime(timestamp) {
+                    return new Date(timestamp).toLocaleTimeString();
+                },
+                
+                initCharts() {
+                    this.initSharpeChart();
+                    this.initPriceChart();
+                },
+                
+                initSharpeChart() {
+                    const ctx = document.getElementById('sharpeChart').getContext('2d');
+                    this.charts.sharpe = new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: this.topPerformers.slice(0, 5).map(p => p.symbol),
+                            datasets: [{
+                                label: 'Sharpe Ratio',
+                                data: this.topPerformers.slice(0, 5).map(p => p.sharpe_ratio),
+                                backgroundColor: 'rgba(52, 152, 219, 0.8)',
+                                borderColor: 'rgba(52, 152, 219, 1)',
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            scales: {
+                                y: {
+                                    beginAtZero: true
+                                }
+                            }
+                        }
+                    });
+                },
+                
+                initPriceChart() {
+                    const ctx = document.getElementById('priceChart').getContext('2d');
+                    
+                    // Generiere Sample-Daten für letzten 24h
+                    const labels = [];
+                    const data = [];
+                    const basePrice = 108650;
+                    
+                    for (let i = 24; i >= 0; i--) {
+                        const time = new Date();
+                        time.setHours(time.getHours() - i);
+                        labels.push(time.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}));
+                        
+                        const variation = (Math.random() - 0.5) * 0.05; // ±2.5% Variation
+                        data.push(basePrice * (1 + variation));
+                    }
+                    
+                    this.charts.price = new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: 'BTC/USDT Price',
+                                data: data,
+                                borderColor: 'rgba(39, 174, 96, 1)',
+                                backgroundColor: 'rgba(39, 174, 96, 0.1)',
+                                fill: true,
+                                tension: 0.4
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            scales: {
+                                y: {
+                                    beginAtZero: false
+                                }
+                            }
+                        }
+                    });
+                },
+                
+                updateCharts() {
+                    if (this.charts.sharpe) {
+                        this.charts.sharpe.data.datasets[0].data = this.topPerformers.slice(0, 5).map(p => p.sharpe_ratio);
+                        this.charts.sharpe.update();
+                    }
+                }
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>

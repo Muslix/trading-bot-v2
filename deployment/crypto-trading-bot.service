@@ -1,0 +1,17 @@
+[Unit]
+Description=Crypto Trading Bot 24/7
+After=network.target
+
+[Service]
+Type=simple
+User=muslix
+WorkingDirectory=/home/muslix/trading_bot_v2
+Environment=PYTHONPATH=/home/muslix/trading_bot_v2
+ExecStart=/usr/bin/python3 /home/muslix/trading_bot_v2/src/crypto_monitor_24_7.py
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
