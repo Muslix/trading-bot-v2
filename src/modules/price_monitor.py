@@ -56,9 +56,7 @@ async def fetch_crypto_price(exchange_name: str, symbol: str) -> Tuple[str, floa
 
 
 @async_log_performance
-async def monitor_multi_exchange_prices(
-    symbol: str, exchanges: List[str] = None
-) -> Dict[str, float]:
+async def monitor_multi_exchange_prices(symbol: str, exchanges: List[str] = None) -> Dict[str, float]:
     """Live-Preise von mehreren Börsen gleichzeitig abholen"""
 
     if exchanges is None:
@@ -85,9 +83,7 @@ async def monitor_multi_exchange_prices(
     return prices
 
 
-async def monitor_multiple_symbols(
-    symbols: List[str], exchanges: List[str] = None
-) -> Dict[str, Dict[str, float]]:
+async def monitor_multiple_symbols(symbols: List[str], exchanges: List[str] = None) -> Dict[str, Dict[str, float]]:
     """Überwache mehrere Symbole gleichzeitig auf allen Börsen"""
 
     if exchanges is None:

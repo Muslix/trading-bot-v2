@@ -17,7 +17,6 @@ async def fetch_crypto_price_real(exchange_name: str, symbol: str) -> Tuple[str,
     try:
         timeout = aiohttp.ClientTimeout(total=10)
         async with aiohttp.ClientSession(timeout=timeout) as session:
-
             if exchange_name.lower() == "binance":
                 # Binance API
                 binance_symbol = symbol.replace("/", "")
@@ -190,9 +189,7 @@ async def fetch_crypto_price_enhanced(exchange_name: str, symbol: str) -> Tuple[
 
 
 @async_log_performance
-async def monitor_real_exchange_prices(
-    symbol: str, exchanges: List[str] = None
-) -> Dict[str, float]:
+async def monitor_real_exchange_prices(symbol: str, exchanges: List[str] = None) -> Dict[str, float]:
     """Live-Preise von mehreren Börsen mit echten APIs"""
 
     if exchanges is None:

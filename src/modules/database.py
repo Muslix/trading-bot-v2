@@ -227,9 +227,7 @@ class CryptoDatabaseManager:
 
         # Prüfe zuerst, ob ähnlicher Alert bereits existiert
         if self.check_recent_arbitrage_alert(opportunity, hours=6):
-            self.logger.debug(
-                "⏭️ Überspringe duplizierten Alert für {opportunity.get('symbol', 'UNKNOWN')}"
-            )
+            self.logger.debug("⏭️ Überspringe duplizierten Alert für {opportunity.get('symbol', 'UNKNOWN')}")
             return -1  # Negative ID zeigt an, dass nicht gespeichert wurde
 
         with self.get_connection() as conn:
@@ -406,24 +404,18 @@ class CryptoDatabaseManager:
             return [dict(row) for row in cursor.fetchall()]
 
     # PORTFOLIO SNAPSHOTS METHODS
-    def save_portfolio_snapshot(
-        self, top_performers: List[Tuple], snapshot_type: str = "performance_check"
-    ):
+    def save_portfolio_snapshot(self, top_performers: List[Tuple], snapshot_type: str = "performance_check"):
         """Speichere Portfolio-Snapshot"""
         with self.get_connection() as conn:
             cursor = conn.cursor()
 
             # Konvertiere zu JSON
-            performers_json = json.dumps(
-                [{"symbol": symbol, "metrics": metrics} for symbol, metrics in top_performers]
-            )
+            performers_json = json.dumps([{"symbol": symbol, "metrics": metrics} for symbol, metrics in top_performers])
 
             # Berechne Statistiken
             total_coins = len(top_performers)
             avg_sharpe = (
-                sum(metrics["sharpe_ratio"] for _, metrics in top_performers) / total_coins
-                if total_coins > 0
-                else 0
+                sum(metrics["sharpe_ratio"] for _, metrics in top_performers) / total_coins if total_coins > 0 else 0
             )
             best_performer = top_performers[0] if top_performers else ("", {"sharpe_ratio": 0})
 

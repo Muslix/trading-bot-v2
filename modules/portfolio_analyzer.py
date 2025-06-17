@@ -67,53 +67,29 @@ def analyze_crypto_portfolio_sequential(crypto_symbols: List[str]) -> Dict[str, 
     return results
 
 
-def get_top_cryptocurrencies(n: int = 100) -> List[str]:
-    """Hole die Top N Kryptowährungen für die Analyse"""
-    # Erweiterte Liste mit 200+ Top Kryptowährungen
-    crypto_list = [
-        # Top 50 - Major cryptocurrencies
-        'BTC', 'ETH', 'BNB', 'XRP', 'ADA', 'DOGE', 'MATIC', 'SOL', 'DOT', 'SHIB',
-        'AVAX', 'TRX', 'WBTC', 'LEO', 'LTC', 'UNI', 'LINK', 'XLM', 'ATOM', 'TON',
-        'XMR', 'ETC', 'BCH', 'ICP', 'HBAR', 'APT', 'LDO', 'QNT', 'CRO', 'VET',
-        'NEAR', 'ALGO', 'MANA', 'SAND', 'APE', 'FIL', 'CHZ', 'EGLD', 'EOS', 'THETA',
-        'AXS', 'XTZ', 'ROSE', 'FLOW', 'KLAY', 'MINA', 'RUNE', 'FTM', 'LRC', 'GRT',
+def get_top_cryptocurrencies(n: int = 50) -> List[str]:
+    """Hole die Top N Kryptowährungen für die Analyse - nur aktive Coins"""
+    # Bereinigte Liste mit aktuell verfügbaren Coins (Yahoo Finance kompatibel)
+    active_crypto_list = [
+        # Top Tier - Major cryptocurrencies (sehr stabil)
+        "BTC", "ETH", "BNB", "XRP", "ADA", "DOGE", "SOL", "DOT", "MATIC", "AVAX",
+        "LTC", "UNI", "LINK", "XLM", "ATOM", "XMR", "ETC", "BCH", "ALGO", "VET",
         
-        # 51-100 - DeFi & Layer 2
-        'AAVE', 'CRV', 'SNX', 'COMP', 'MKR', 'YFI', 'SUSHI', '1INCH', 'BAL', 'PERP',
-        'DYDX', 'GMX', 'JOE', 'PNG', 'LOOKS', 'X2Y2', 'BLUR', 'MAGIC', 'TRB', 'API3',
-        'OCEAN', 'FET', 'AGIX', 'RLC', 'NMR', 'STORJ', 'ANKR', 'REQ', 'CTSI', 'BAND',
-        'REN', 'KNC', 'ZRX', 'ALPHA', 'BADGER', 'CREAM', 'COVER', 'HEGIC', 'PICKLE', 'HARVEST',
-        'IDLE', 'RARI', 'FARM', 'CVX', 'FXS', 'TRIBE', 'FEI', 'LUSD', 'FRAX', 'OHM',
+        # Tier 2 - Established altcoins
+        "AAVE", "SAND", "MANA", "CRV", "SUSHI", "YFI", "COMP", "MKR", "SNX",
+        "BAL", "REN", "KNC", "ZRX", "NMR", "STORJ", "GRT", "ANKR", "BAND",
         
-        # 101-150 - Gaming & NFT
-        'ENJ', 'CHR', 'ALICE', 'TLM', 'SLP', 'PYR', 'GALA', 'GODS', 'IMX', 'SUPER',
-        'HERO', 'SKILL', 'JEWEL', 'CRYSTAL', 'RARE', 'KLIMA', 'TIME', 'MEMO', 'ICE', 'SPELL',
-        'MIM', 'DEUS', 'DEI', 'SOLID', 'SEX', 'SPIRIT', 'LQDR', 'EQUAL', 'VELO', 'THALES',
-        'KWENTA', 'LYRA', 'OP', 'ARB', 'METIS', 'BOBA', 'POLYGON', 'ARBITRUM', 'OPTIMISM', 'ZKSYNC',
-        'STARKNET', 'LOOPRING', 'XDAI', 'CELO', 'HARMONY', 'MOONBEAM', 'MOONRIVER', 'ASTAR', 'SHIDEN', 'ACALA',
+        # Tier 3 - DeFi and newer projects (with data)
+        "THETA", "FIL", "TRX", "EOS", "FTM", "NEAR", "OCEAN",
+        "FET", "API3", "BADGER", "FARM",
         
-        # 151-200 - Additional projects
-        'KARURA', 'BIFROST', 'PARALLEL', 'CENTRIFUGE', 'PHALA', 'LITENTRY', 'SUBSOCIAL', 'ZEITGEIST',
-        'BASILISK', 'TINKERNET', 'CALAMARI', 'SHADOW', 'MANTA', 'DOLPHIN', 'PIONEER', 'ROBONOMICS',
-        'EDGEWARE', 'DARWINIA', 'CRAB', 'CHAINX', 'KAVA', 'OSMO', 'SCRT', 'JUNO',
-        'STARS', 'HUAHUA', 'CMDX', 'CRE', 'SIF', 'ROWAN', 'IRIS', 'REGEN', 'IOV', 'CARTESI',
-        'APTOS', 'SUI', 'SEI', 'CELESTIA', 'DYMENSION', 'NEUTRON', 'NOLUS', 'STRIDE', 'QUICKSILVER', 'COMDEX'
+        # Tier 4 - Gaming and NFT (available on Yahoo)
+        "AXS", "GALA", "ENJ", "CHZ", "FLOW"
     ]
     
-    # Erweitere Liste falls mehr Coins gewünscht
-    if len(crypto_list) < n:
-        additional_coins = [
-            # Meme Coins
-            'FLOKI', 'BABYDOGE', 'SAFEMOON', 'KISHU', 'HOGE', 'DOGELON', 'SAITAMA', 'JACY',
-            # Exchange Tokens
-            'FTT', 'HT', 'OKB', 'GT', 'KCS', 'BGB', 'WRX', 'BKEX', 'MX', 'BTSE',
-            # Infrastructure
-            'HELIUM', 'RNDR', 'LIVEPEER', 'STORJ', 'SIACOIN', 'FILECOIN', 'ARWEAVE', 'THETA', 'TFUEL', 'AKASH'
-        ]
-        
-        crypto_list.extend(additional_coins[:n - len(crypto_list)])
-    
-    return crypto_list[:n]
+    # Entferne Duplikate und gib nur die ersten n zurück
+    unique_cryptos = list(dict.fromkeys(active_crypto_list))
+    return unique_cryptos[:n]
 
 
 def display_portfolio_results(results: Dict[str, Dict], top_n: int = 10):

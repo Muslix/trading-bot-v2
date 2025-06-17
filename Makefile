@@ -129,7 +129,16 @@ deploy: ## 🚀 Deploy to production
 
 production-start: ## 🔄 Start production services
 	@echo "$(GREEN)🔄 Starting production services...$(NC)"
-	bash deployment/start_production.sh
+	@echo "$(BLUE)🔧 Loading environment configuration...$(NC)"
+	@if [ -f ".env.local" ]; then \
+		echo "$(GREEN)✅ Using .env.local configuration$(NC)"; \
+	elif [ -f ".env" ]; then \
+		echo "$(GREEN)✅ Using .env configuration$(NC)"; \
+	else \
+		echo "$(YELLOW)⚠️ No .env file found$(NC)"; \
+	fi
+	@chmod +x deployment/start_production.sh
+	@bash deployment/start_production.sh
 
 production-stop: ## ⏹️ Stop production services
 	@echo "$(YELLOW)⏹️ Stopping production services...$(NC)"

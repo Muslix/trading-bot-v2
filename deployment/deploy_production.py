@@ -80,25 +80,52 @@ class ProductionDeployment:
         """Setup Production-Konfiguration"""
         self.log("⚙️ Setting up production configuration...")
         
-        # Load existing .env file if it exists
+        # Load existing .env files if they exist (prioritize .env.local)
         import os
         from pathlib import Path
         
-        env_path = Path(self.project_root) / ".env"
+        env_local_path = Path(self.project_root).parent / ".env.local"
+        env_path = Path(self.project_root).parent / ".env"
+        
         telegram_token = os.getenv('TELEGRAM_BOT_TOKEN', '')
         telegram_chat_id = os.getenv('TELEGRAM_CHAT_ID', '')
         
-        if not telegram_token and env_path.exists():
-            # Try to read from .env file
+        # First try to load from .env.local (highest priority)
+        if not telegram_token and env_local_path.exists():
+            self.log("🔧 Loading configuration from .env.local")
             try:
-                with open(env_path, 'r') as f:
+                with open(env_local_path, 'r') as f:
                     for line in f:
                         if line.strip().startswith('TELEGRAM_BOT_TOKEN='):
                             telegram_token = line.strip().split('=', 1)[1]
                         elif line.strip().startswith('TELEGRAM_CHAT_ID='):
                             telegram_chat_id = line.strip().split('=', 1)[1]
             except Exception as e:
+                self.log(f"⚠️ Warning: Could not read .env.local file: {e}")
+        
+        # Fallback to .env if no .env.local or missing values
+        if (not telegram_token or not telegram_chat_id) and env_path.exists():
+            self.log("🔧 Loading configuration from .env")
+            try:
+                with open(env_path, 'r') as f:
+                    for line in f:
+                        if not telegram_token and line.strip().startswith('TELEGRAM_BOT_TOKEN='):
+                            telegram_token = line.strip().split('=', 1)[1]
+                        elif not telegram_chat_id and line.strip().startswith('TELEGRAM_CHAT_ID='):
+                            telegram_chat_id = line.strip().split('=', 1)[1]
+            except Exception as e:
                 self.log(f"⚠️ Warning: Could not read .env file: {e}")
+        
+        # Validate credentials
+        if telegram_token and telegram_token != "your_bot_token_here":
+            self.log(f"✅ Telegram Bot Token loaded: {telegram_token[:10]}...")
+        else:
+            self.log("⚠️ No valid Telegram Bot Token found in environment")
+            
+        if telegram_chat_id and telegram_chat_id != "your_chat_id_here":
+            self.log(f"✅ Telegram Chat ID loaded: {telegram_chat_id}")
+        else:
+            self.log("⚠️ No valid Telegram Chat ID found in environment")
         
         # Production config
         prod_config = {

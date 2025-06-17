@@ -138,9 +138,7 @@ def display_enhanced_portfolio_results(results: Dict[str, Dict], top_n: int = 15
         )
 
     print("\n📊 Statistiken der Analyse:")
-    real_data_count = sum(
-        1 for _, v in valid_results.items() if v.get("data_source") != "simulated"
-    )
+    real_data_count = sum(1 for _, v in valid_results.items() if v.get("data_source") != "simulated")
     simulated_count = len(valid_results) - real_data_count
 
     print(f"   🟢 Echte Marktdaten: {real_data_count} Coins")
@@ -209,9 +207,7 @@ async def main():
 
         if top_cryptos:
             best_crypto = top_cryptos[0]
-            print(
-                "   Beste Kryptowährung: {best_crypto[0]} (Sharpe: {best_crypto[1]['sharpe_ratio']:.4f})"
-            )
+            print("   Beste Kryptowährung: {best_crypto[0]} (Sharpe: {best_crypto[1]['sharpe_ratio']:.4f})")
 
         print("\n🎯 Nächste Schritte:")
         print("  - Erweitere zu Arbitrage Bot")

@@ -109,9 +109,7 @@ class TelegramCryptoBot:
 
         # Filtere nur große Arbitrage-Möglichkeiten (>2%)
         significant_opportunities = [
-            opp
-            for opp in opportunities
-            if opp.get("profit_percentage", 0) >= self.alert_config["arbitrage_threshold"]
+            opp for opp in opportunities if opp.get("profit_percentage", 0) >= self.alert_config["arbitrage_threshold"]
         ]
 
         if not significant_opportunities:
@@ -142,9 +140,7 @@ class TelegramCryptoBot:
         return await self.send_message(message)
 
     @async_log_performance
-    async def send_performance_alert(
-        self, top_performers: List[tuple], timeframe: str = "24h"
-    ) -> bool:
+    async def send_performance_alert(self, top_performers: List[tuple], timeframe: str = "24h") -> bool:
         """Sende Performance Update"""
         if not top_performers or len(top_performers) < 3:
             return False

@@ -119,7 +119,7 @@ class TestUtilityFunctions:
         cryptos = get_top_cryptocurrencies()
 
         assert isinstance(cryptos, list)
-        assert len(cryptos) == 100
+        assert len(cryptos) == 50  # Updated to match new default
         assert "BTC" in cryptos
         assert "ETH" in cryptos
 

@@ -132,9 +132,7 @@ def get_live_prices():
 
                 live_prices.append(price_entry)
 
-        return jsonify(
-            {"success": True, "data": live_prices, "last_updated": datetime.now().isoformat()}
-        )
+        return jsonify({"success": True, "data": live_prices, "last_updated": datetime.now().isoformat()})
 
     except Exception as e:
         logger.error("Fehler beim Abrufen der Live-Preise: {e}")
@@ -195,13 +193,9 @@ def get_price_history(symbol):
             if exchange not in exchanges_data:
                 exchanges_data[exchange] = []
 
-            exchanges_data[exchange].append(
-                {"timestamp": entry["timestamp"], "price": entry["price"]}
-            )
+            exchanges_data[exchange].append({"timestamp": entry["timestamp"], "price": entry["price"]})
 
-        return jsonify(
-            {"success": True, "data": exchanges_data, "symbol": symbol, "count": len(price_history)}
-        )
+        return jsonify({"success": True, "data": exchanges_data, "symbol": symbol, "count": len(price_history)})
 
     except Exception as e:
         logger.error("Fehler beim Abrufen der Preis-Historie für {symbol}: {e}")
@@ -267,9 +261,7 @@ def get_telegram_stats():
 
             recent_messages = [dict(row) for row in cursor.fetchall()]
 
-        return jsonify(
-            {"success": True, "data": {"stats": stats, "recent_messages": recent_messages}}
-        )
+        return jsonify({"success": True, "data": {"stats": stats, "recent_messages": recent_messages}})
 
     except Exception as e:
         logger.error("Fehler beim Abrufen der Telegram-Statistiken: {e}")
@@ -314,12 +306,8 @@ def get_bot_health():
 
         health_data = {
             "is_healthy": True,
-            "last_arbitrage_check": (
-                last_arbitrage["last_arbitrage_check"] if last_arbitrage else None
-            ),
-            "last_performance_check": (
-                last_performance["last_performance_check"] if last_performance else None
-            ),
+            "last_arbitrage_check": (last_arbitrage["last_arbitrage_check"] if last_arbitrage else None),
+            "last_performance_check": (last_performance["last_performance_check"] if last_performance else None),
             "latest_stats": dict(latest_stats) if latest_stats else {},
             "checked_at": datetime.now().isoformat(),
         }
@@ -376,6 +364,13 @@ def test_api():
 
 
 if __name__ == "__main__":
+    import sys
+    import os
+
+    # Add config directory to path
+    config_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "config")
+    sys.path.append(config_dir)
+
     from config import get_config
 
     config = get_config()

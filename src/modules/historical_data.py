@@ -66,7 +66,7 @@ class HistoricalDataManager:
     def fetch_historical_data(self, symbol: str, period: str = "2y") -> Optional[pd.DataFrame]:
         """Lade historische Daten für einen Coin"""
         try:
-            yahoo_symbol = self.crypto_symbol_mapping.get(symbol, "{symbol}-USD")
+            yahoo_symbol = self.crypto_symbol_mapping.get(symbol, f"{symbol}-USD")
 
             ticker = yf.Ticker(yahoo_symbol)
             hist = ticker.history(period=period)
@@ -107,14 +107,8 @@ class HistoricalDataManager:
 
             # Sortino Ratio (nur negative Volatilität)
             negative_returns = returns[returns < 0]
-            downside_volatility = (
-                negative_returns.std() * np.sqrt(365) if len(negative_returns) > 0 else volatility
-            )
-            sortino_ratio = (
-                (annual_return - risk_free_rate) / downside_volatility
-                if downside_volatility > 0
-                else 0
-            )
+            downside_volatility = negative_returns.std() * np.sqrt(365) if len(negative_returns) > 0 else volatility
+            sortino_ratio = (annual_return - risk_free_rate) / downside_volatility if downside_volatility > 0 else 0
 
             # Maximum Drawdown
             cumulative_returns = (1 + returns).cumprod()
@@ -127,9 +121,7 @@ class HistoricalDataManager:
             var_99 = np.percentile(returns, 1)
 
             # Conditional Value at Risk (Expected Shortfall)
-            cvar_95 = (
-                returns[returns <= var_95].mean() if len(returns[returns <= var_95]) > 0 else var_95
-            )
+            cvar_95 = returns[returns <= var_95].mean() if len(returns[returns <= var_95]) > 0 else var_95
 
             # Beta vs Bitcoin (wenn BTC Daten verfügbar)
             beta = self._calculate_beta_vs_btc(returns)
@@ -238,9 +230,7 @@ def _analyze_symbol_with_period(args):
 
 
 @log_performance
-def analyze_crypto_portfolio_enhanced(
-    crypto_symbols: List[str], period: str = "2y"
-) -> Dict[str, Dict]:
+def analyze_crypto_portfolio_enhanced(crypto_symbols: List[str], period: str = "2y") -> Dict[str, Dict]:
     """Erweiterte Portfolio-Analyse mit echten historischen Daten"""
     print(f"🔄 Analysiere {len(crypto_symbols)} Kryptowährungen mit {period} historischen Daten...")
     print("📊 Lade echte Marktdaten für erweiterte Risiko-Metriken...")

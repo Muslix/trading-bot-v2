@@ -10,6 +10,32 @@ echo "🚀 Starting Crypto Trading Bot 24/7..."
 echo "📅 $(date)"
 echo "📁 Working Directory: $(pwd)"
 
+# Load environment variables from .env files
+echo "🔧 Loading environment configuration..."
+if [ -f ".env.local" ]; then
+    echo "✅ Loading .env.local (local development)"
+    export $(grep -v '^#' .env.local | xargs)
+elif [ -f ".env" ]; then
+    echo "✅ Loading .env (default configuration)"
+    export $(grep -v '^#' .env | xargs)
+else
+    echo "⚠️ No .env file found, using system environment"
+fi
+
+# Verify critical environment variables
+if [ -z "$TELEGRAM_BOT_TOKEN" ]; then
+    echo "❌ TELEGRAM_BOT_TOKEN not set!"
+    exit 1
+fi
+
+if [ -z "$TELEGRAM_CHAT_ID" ]; then
+    echo "❌ TELEGRAM_CHAT_ID not set!"
+    exit 1
+fi
+
+echo "✅ Telegram Bot Token: ${TELEGRAM_BOT_TOKEN:0:10}..."
+echo "✅ Telegram Chat ID: $TELEGRAM_CHAT_ID"
+
 # Set Python path to include the project root
 export PYTHONPATH="$PROJECT_ROOT:$PYTHONPATH"
 

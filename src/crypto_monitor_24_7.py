@@ -84,7 +84,7 @@ class CryptoMonitor24_7:
         except KeyboardInterrupt:
             self.logger.info("⏹️ Monitoring durch Benutzer gestoppt")
         except Exception as e:
-            self.logger.error("❌ Kritischer Fehler im Monitoring: {e}")
+            self.logger.error(f"❌ Kritischer Fehler im Monitoring: {e}")
             await crypto_bot.send_error_alert(str(e), "Main Monitor")
         finally:
             await self._shutdown()
@@ -116,13 +116,11 @@ class CryptoMonitor24_7:
                 cycle_time = time.time() - loop_start
                 sleep_time = max(1, self.config["arbitrage_check_interval"] - cycle_time)
 
-                self.logger.info(
-                    "🔄 Cycle abgeschlossen in {cycle_time:.1f}s - Schlafe {sleep_time:.1f}s"
-                )
+                self.logger.info(f"🔄 Cycle abgeschlossen in {cycle_time:.1f}s - Schlafe {sleep_time:.1f}s")
                 await asyncio.sleep(sleep_time)
 
             except Exception as e:
-                self.logger.error("❌ Fehler im Monitoring-Cycle: {e}")
+                self.logger.error(f"❌ Fehler im Monitoring-Cycle: {e}")
                 await crypto_bot.send_error_alert(str(e), "Monitor Cycle")
                 await asyncio.sleep(30)  # Kurze Pause bei Fehlern
 
@@ -148,9 +146,7 @@ class CryptoMonitor24_7:
 
                     if opportunities:
                         # Filtere nur profitable Opportunities (>= 1.5%)
-                        profitable_opps = [
-                            opp for opp in opportunities if opp.get("profit_percentage", 0) >= 1.5
-                        ]
+                        profitable_opps = [opp for opp in opportunities if opp.get("profit_percentage", 0) >= 1.5]
 
                         if profitable_opps:
                             saved_count = 0
@@ -166,27 +162,21 @@ class CryptoMonitor24_7:
 
                             if saved_count < len(profitable_opps):
                                 skipped = len(profitable_opps) - saved_count
-                                self.logger.info(
-                                    f"⏭️ {skipped} duplikate Alerts übersprungen für {symbol}"
-                                )
+                                self.logger.info(f"⏭️ {skipped} duplikate Alerts übersprungen für {symbol}")
 
                 # Kurze Pause zwischen Symbolen
                 await asyncio.sleep(1)
 
             # Nutze Smart Alert System für intelligente Alerts
             if arbitrage_opportunities:
-                alert_results = await smart_alerts.process_all_alerts(
-                    arbitrage_opportunities=arbitrage_opportunities
-                )
+                alert_results = await smart_alerts.process_all_alerts(arbitrage_opportunities=arbitrage_opportunities)
                 self.stats["alerts_sent"] += alert_results["arbitrage_alerts"]
 
             self.stats["total_arbitrage_checks"] += 1
-            self.logger.info(
-                "✅ Arbitrage-Check abgeschlossen - {len(arbitrage_opportunities)} Möglichkeiten gefunden"
-            )
+            self.logger.info("✅ Arbitrage-Check abgeschlossen - {len(arbitrage_opportunities)} Möglichkeiten gefunden")
 
         except Exception as e:
-            self.logger.error("❌ Fehler im Arbitrage-Check: {e}")
+            self.logger.error(f"❌ Fehler im Arbitrage-Check: {e}")
 
     @async_log_performance
     async def _performance_check_cycle(self):
@@ -194,9 +184,7 @@ class CryptoMonitor24_7:
         now = datetime.now()
 
         # Prüfe ob 10 Minuten vergangen sind
-        if self.last_performance_check and now - self.last_performance_check < timedelta(
-            minutes=10
-        ):
+        if self.last_performance_check and now - self.last_performance_check < timedelta(minutes=10):
             return
 
         try:
@@ -227,9 +215,7 @@ class CryptoMonitor24_7:
             if results:
                 # Sortiere nach Sharpe Ratio
                 valid_results = {k: v for k, v in results.items() if "error" not in v}
-                sorted_cryptos = sorted(
-                    valid_results.items(), key=lambda x: x[1]["sharpe_ratio"], reverse=True
-                )
+                sorted_cryptos = sorted(valid_results.items(), key=lambda x: x[1]["sharpe_ratio"], reverse=True)
 
                 # Speichere Performance-Daten in Database
                 saved_count = db.save_performance_data(results)
@@ -239,12 +225,8 @@ class CryptoMonitor24_7:
                 snapshot_id = db.save_portfolio_snapshot(current_top_5, "performance_check")
 
                 # Nutze Smart Alert System für Performance-Alerts
-                alert_results = await smart_alerts.process_all_alerts(
-                    performance_data=current_top_5
-                )
-                self.stats["alerts_sent"] += (
-                    alert_results["performance_alerts"] + alert_results["new_performer_alerts"]
-                )
+                alert_results = await smart_alerts.process_all_alerts(performance_data=current_top_5)
+                self.stats["alerts_sent"] += alert_results["performance_alerts"] + alert_results["new_performer_alerts"]
 
                 # Speichere für nächsten Vergleich
                 self.performance_history[now] = current_top_5
@@ -254,7 +236,7 @@ class CryptoMonitor24_7:
             self.logger.info("✅ Performance-Analyse abgeschlossen")
 
         except Exception as e:
-            self.logger.error("❌ Fehler in Performance-Analyse: {e}")
+            self.logger.error(f"❌ Fehler in Performance-Analyse: {e}")
 
     async def _check_performance_changes(self, current_performers: List[tuple]) -> bool:
         """Prüfe ob sich Performance signifikant geändert hat"""
@@ -269,13 +251,9 @@ class CryptoMonitor24_7:
         for current_symbol, current_metrics in current_performers:
             for last_symbol, last_metrics in last_performers:
                 if current_symbol == last_symbol:
-                    sharpe_change = abs(
-                        current_metrics["sharpe_ratio"] - last_metrics["sharpe_ratio"]
-                    )
+                    sharpe_change = abs(current_metrics["sharpe_ratio"] - last_metrics["sharpe_ratio"])
                     if sharpe_change >= crypto_bot.alert_config["sharpe_change_threshold"]:
-                        self.logger.info(
-                            "📈 Signifikante Sharpe-Änderung bei {current_symbol}: {sharpe_change:.2f}"
-                        )
+                        self.logger.info("📈 Signifikante Sharpe-Änderung bei {current_symbol}: {sharpe_change:.2f}")
                         return True
 
         return False
@@ -288,7 +266,6 @@ class CryptoMonitor24_7:
         if now.hour == self.config["daily_summary_hour"] and (
             not self.last_daily_summary or self.last_daily_summary.date() < now.date()
         ):
-
             try:
                 self.logger.info("🌅 Sende täglichen Summary...")
 
@@ -316,7 +293,7 @@ class CryptoMonitor24_7:
                 self.logger.info("✅ Täglicher Summary gesendet")
 
             except Exception as e:
-                self.logger.error("❌ Fehler beim täglichen Summary: {e}")
+                self.logger.error(f"❌ Fehler beim täglichen Summary: {e}")
 
     def _update_stats(self):
         """Update interne Statistiken"""
@@ -376,11 +353,23 @@ async def main():
     print(f"   • Daily Summary: {monitor.config['daily_summary_hour']}:00 Uhr")
     print()
 
-    # Chat ID eingeben (in Produktion automatisch)
-    chat_id = input("💬 Gib deine Telegram Chat ID ein (oder Enter für Demo): ").strip()
-    if not chat_id:
-        chat_id = "123456789"  # Demo-Modus
-        print("📱 Demo-Modus aktiviert (keine echten Telegram-Nachrichten)")
+    # Chat ID aus Konfiguration verwenden (automatisch in Produktion)
+    chat_id = config.telegram_chat_id
+
+    if not chat_id or chat_id == "your_chat_id_here":
+        print("⚠️ Keine Telegram Chat ID in der Konfiguration gefunden!")
+        print("💡 Optionen:")
+        print("   1. Chat ID manuell eingeben")
+        print("   2. Demo-Modus verwenden")
+        chat_id_input = input("💬 Gib deine Telegram Chat ID ein (oder Enter für Demo): ").strip()
+        if chat_id_input:
+            chat_id = chat_id_input
+            print(f"✅ Verwende Chat ID: {chat_id}")
+        else:
+            chat_id = "123456789"  # Demo-Modus
+            print("📱 Demo-Modus aktiviert (keine echten Telegram-Nachrichten)")
+    else:
+        print(f"✅ Verwende Chat ID aus Konfiguration: {chat_id}")
 
     print("\n🔄 Starte 24/7 Monitoring...")
     print("📱 Drücke Ctrl+C zum Stoppen")

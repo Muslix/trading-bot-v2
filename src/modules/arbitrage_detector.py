@@ -53,9 +53,7 @@ def alert_system(opportunities: List[Dict], min_profit: float = 1.0) -> List[str
         if opp["profit_percent"] >= min_profit:
             alert = f"🚨 ARBITRAGE ALERT! {opp['profit_percent']:.2f}% Profit möglich!"
             alert += f"\n   📈 Kaufe auf {opp['buy_exchange'].upper()}: ${opp['buy_price']:,.2f}"
-            alert += (
-                f"\n   📉 Verkaufe auf {opp['sell_exchange'].upper()}: ${opp['sell_price']:,.2f}"
-            )
+            alert += f"\n   📉 Verkaufe auf {opp['sell_exchange'].upper()}: ${opp['sell_price']:,.2f}"
             alert += f"\n   💰 Profit pro Einheit: ${opp['profit_per_unit']:,.2f}"
 
             alerts.append(alert)
