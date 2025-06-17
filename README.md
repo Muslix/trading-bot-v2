@@ -233,14 +233,14 @@ Das Web-Dashboard zeigt:
 - **Bessere Performance**: Optimierte Datenverarbeitung
 
 ### ✅ **Telegram Integration**
-- **Vorkonfigurierte Chat ID**: `283812226` bereits eingetragen
+- **Chat ID Setup**: Automatische Chat ID Erkennung bei Setup
 - **Sofortige Alerts**: Direkte Benachrichtigungen bei Arbitrage-Opportunities
 - **Smart Filtering**: Nur profitable Alerts (≥1.5%) werden gesendet
 
 ### 🔧 **Konfiguration (.env Updates)**
 ```env
 # Neue Einstellungen
-TELEGRAM_CHAT_ID=283812226          # Ihre Chat ID
+TELEGRAM_CHAT_ID=YOUR_CHAT_ID       # Ihre Chat ID (siehe Setup)
 ANALYSIS_CRYPTO_COUNT=100           # Analysiere 100 Coins
 ARBITRAGE_THRESHOLD=1.5             # 1.5% minimum profit
 ```
