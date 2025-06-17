@@ -67,7 +67,7 @@ class TelegramCryptoBot:
                 return str(updates[-1].message.chat.id)
             return None
         except Exception as e:
-            self.logger.error("Fehler beim Abrufen der Chat ID: {e}")
+            self.logger.error(f"Fehler beim Abrufen der Chat ID: {e}")
             return None
 
     @async_log_performance
@@ -83,12 +83,12 @@ class TelegramCryptoBot:
             return True
 
         except Exception as e:
-            self.logger.error("Fehler beim Senden der Telegram Nachricht: {e}")
+            self.logger.error(f"Fehler beim Senden der Telegram Nachricht: {e}")
             return False
 
     def _should_send_alert(self, alert_type: str, key: str = "") -> bool:
         """Prüfe ob Alert gesendet werden soll (Spam-Protection)"""
-        alert_key = "{alert_type}_{key}"
+        alert_key = f"{alert_type}_{key}"
         now = datetime.now()
 
         if alert_key in self.alert_cooldowns:
@@ -123,7 +123,7 @@ class TelegramCryptoBot:
         # Erstelle Alert-Nachricht
         best_opp = max(significant_opportunities, key=lambda x: x.get("profit_percentage", 0))
 
-        message = """
+        message = f"""
 🚨 *ARBITRAGE ALERT!* 🚨
 
 💎 *{best_opp['symbol']}*
@@ -149,7 +149,7 @@ class TelegramCryptoBot:
         if not self._should_send_alert("performance", timeframe):
             return False
 
-        message = """
+        message = f"""
 📊 *TOP PERFORMER UPDATE* ({timeframe})
 
 """
@@ -160,10 +160,10 @@ class TelegramCryptoBot:
 
             if sharpe > 1.0:  # Nur gute Performer
                 emoji = "🚀" if i == 1 else "📈" if i <= 3 else "⭐"
-                message += "{emoji} *{i}. {symbol}*\n"
-                message += "   Sharpe: *{sharpe:.2f}* | Return: *{returns:.1f}%*\n\n"
+                message += f"{emoji} *{i}. {symbol}*\n"
+                message += f"   Sharpe: *{sharpe:.2f}* | Return: *{returns:.1f}%*\n\n"
 
-        message += "⏰ {datetime.now().strftime('%H:%M:%S')}"
+        message += f"⏰ {datetime.now().strftime('%H:%M:%S')}"
 
         return await self.send_message(message)
 
@@ -175,7 +175,7 @@ class TelegramCryptoBot:
         top_crypto = market_data.get("best_performer", {})
         analyzed_coins = market_data.get("analyzed_coins", 0)
 
-        message = """
+        message = f"""
 🌅 *TÄGLICHER MARKT-REPORT*
 
 📊 *Markt-Übersicht:*
@@ -197,7 +197,7 @@ class TelegramCryptoBot:
     @async_log_performance
     async def send_startup_message(self) -> bool:
         """Sende Bot-Start Nachricht"""
-        message = """
+        message = f"""
 🤖 *CRYPTO TRADING BOT GESTARTET!*
 
 ✅ *Aktive Features:*
@@ -224,7 +224,7 @@ class TelegramCryptoBot:
         if not self._should_send_alert("error", module):
             return False
 
-        message = """
+        message = f"""
 ⚠️ *BOT ERROR ALERT*
 
 🔧 Module: *{module or 'Unknown'}*
@@ -242,7 +242,7 @@ class TelegramCryptoBot:
             bot_info = await self.bot.get_me()
             self.logger.info(f"Bot verbunden: @{bot_info.username}")
 
-            test_message = """
+            test_message = f"""
 🧪 *TEST NACHRICHT*
 
 ✅ Bot ist online und bereit!
@@ -258,7 +258,7 @@ Schreibe /start um zu beginnen.
             return True
 
         except Exception as e:
-            self.logger.error("Bot-Verbindungstest fehlgeschlagen: {e}")
+            self.logger.error(f"Bot-Verbindungstest fehlgeschlagen: {e}")
             return False
 
 

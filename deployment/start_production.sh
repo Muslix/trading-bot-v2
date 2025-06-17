@@ -45,9 +45,16 @@ if [ -d "venv" ]; then
     source venv/bin/activate
 fi
 
+# Install dependencies if needed
+echo "📦 Checking dependencies..."
+python3 -c "import flask, telegram" 2>/dev/null || {
+    echo "📦 Installing missing dependencies..."
+    python3 -m pip install --user flask python-telegram-bot
+}
+
 # Start Web API in background
 echo "🌐 Starting Web API..."
-python src/web_api.py &
+python3 src/web_api.py &
 WEB_PID=$!
 echo "Web API PID: $WEB_PID"
 
@@ -56,7 +63,7 @@ sleep 3
 
 # Start main monitoring bot
 echo "🤖 Starting main monitoring bot..."
-python src/crypto_monitor_24_7.py
+python3 src/crypto_monitor_24_7.py
 
 # Cleanup on exit
 echo "🛑 Shutting down..."

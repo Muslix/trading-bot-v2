@@ -173,10 +173,11 @@ class CryptoMonitor24_7:
                 self.stats["alerts_sent"] += alert_results["arbitrage_alerts"]
 
             self.stats["total_arbitrage_checks"] += 1
-            self.logger.info("✅ Arbitrage-Check abgeschlossen - {len(arbitrage_opportunities)} Möglichkeiten gefunden")
+            self.logger.info(f"✅ Arbitrage-Check abgeschlossen - {len(arbitrage_opportunities)} Möglichkeiten gefunden")
 
         except Exception as e:
             self.logger.error(f"❌ Fehler im Arbitrage-Check: {e}")
+            self.stats["total_arbitrage_checks"] += 1
 
     @async_log_performance
     async def _performance_check_cycle(self):
@@ -203,7 +204,7 @@ class CryptoMonitor24_7:
             current_symbols = crypto_symbols[start_idx:end_idx]
 
             self.logger.info(
-                "📊 Analysiere Batch {current_batch + 1}/{total_batches}: {len(current_symbols)} Coins (Indizes {start_idx}-{end_idx-1})"
+                f"📊 Analysiere Batch {current_batch + 1}/{total_batches}: {len(current_symbols)} Coins (Indizes {start_idx}-{end_idx-1})"
             )
 
             # Analysiere mit historischen Daten
@@ -253,7 +254,7 @@ class CryptoMonitor24_7:
                 if current_symbol == last_symbol:
                     sharpe_change = abs(current_metrics["sharpe_ratio"] - last_metrics["sharpe_ratio"])
                     if sharpe_change >= crypto_bot.alert_config["sharpe_change_threshold"]:
-                        self.logger.info("📈 Signifikante Sharpe-Änderung bei {current_symbol}: {sharpe_change:.2f}")
+                        self.logger.info(f"📈 Signifikante Sharpe-Änderung bei {current_symbol}: {sharpe_change:.2f}")
                         return True
 
         return False
@@ -320,7 +321,7 @@ class CryptoMonitor24_7:
         self.logger.info(f"   • Alerts gesendet: {self.stats['alerts_sent']}")
 
         # Sende Shutdown-Nachricht
-        shutdown_message = """
+        shutdown_message = f"""
 🛑 *BOT GESTOPPT*
 
 ⏱️ *Laufzeit: {uptime} Stunden*

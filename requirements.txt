@@ -6,6 +6,12 @@ ccxt==4.1.64
 asyncio
 typing-extensions==4.8.0
 
+# Web API dependencies
+flask==3.0.0
+
+# Telegram Bot dependencies
+python-telegram-bot==22.1
+
 # Testing dependencies
 pytest==7.4.4
 pytest-asyncio==0.21.1

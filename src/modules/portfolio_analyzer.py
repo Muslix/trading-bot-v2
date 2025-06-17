@@ -135,6 +135,8 @@ def get_top_cryptocurrencies(n: int = 50) -> List[str]:
 
     # Entferne Duplikate und gib nur die ersten n zurück
     unique_cryptos = list(dict.fromkeys(active_crypto_list))
+    if n <= 0:
+        return []
     return unique_cryptos[:n]
 
 

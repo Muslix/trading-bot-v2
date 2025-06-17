@@ -72,7 +72,7 @@ def get_dashboard_data():
         return jsonify({"success": True, "data": dashboard_data})
 
     except Exception as e:
-        logger.error("Fehler beim Abrufen der Dashboard-Daten: {e}")
+        logger.error(f"Fehler beim Abrufen der Dashboard-Daten: {e}")
         return jsonify({"success": False, "error": str(e)}), 500
 
 
@@ -135,7 +135,7 @@ def get_live_prices():
         return jsonify({"success": True, "data": live_prices, "last_updated": datetime.now().isoformat()})
 
     except Exception as e:
-        logger.error("Fehler beim Abrufen der Live-Preise: {e}")
+        logger.error(f"Fehler beim Abrufen der Live-Preise: {e}")
         return jsonify({"success": False, "error": str(e)}), 500
 
 
@@ -148,7 +148,7 @@ def get_arbitrage_alerts():
         return jsonify({"success": True, "data": alerts, "count": len(alerts)})
 
     except Exception as e:
-        logger.error("Fehler beim Abrufen der Arbitrage-Alerts: {e}")
+        logger.error(f"Fehler beim Abrufen der Arbitrage-Alerts: {e}")
         return jsonify({"success": False, "error": str(e)}), 500
 
 
@@ -176,7 +176,7 @@ def get_performance_data():
         )
 
     except Exception as e:
-        logger.error("Fehler beim Abrufen der Performance-Daten: {e}")
+        logger.error(f"Fehler beim Abrufen der Performance-Daten: {e}")
         return jsonify({"success": False, "error": str(e)}), 500
 
 
@@ -198,7 +198,7 @@ def get_price_history(symbol):
         return jsonify({"success": True, "data": exchanges_data, "symbol": symbol, "count": len(price_history)})
 
     except Exception as e:
-        logger.error("Fehler beim Abrufen der Preis-Historie für {symbol}: {e}")
+        logger.error(f"Fehler beim Abrufen der Preis-Historie für {symbol}: {e}")
         return jsonify({"success": False, "error": str(e)}), 500
 
 
@@ -223,7 +223,7 @@ def get_portfolio_snapshots():
         return jsonify({"success": True, "data": snapshots, "count": len(snapshots)})
 
     except Exception as e:
-        logger.error("Fehler beim Abrufen der Portfolio-Snapshots: {e}")
+        logger.error(f"Fehler beim Abrufen der Portfolio-Snapshots: {e}")
         return jsonify({"success": False, "error": str(e)}), 500
 
 
@@ -264,7 +264,7 @@ def get_telegram_stats():
         return jsonify({"success": True, "data": {"stats": stats, "recent_messages": recent_messages}})
 
     except Exception as e:
-        logger.error("Fehler beim Abrufen der Telegram-Statistiken: {e}")
+        logger.error(f"Fehler beim Abrufen der Telegram-Statistiken: {e}")
         return jsonify({"success": False, "error": str(e)}), 500
 
 
@@ -315,7 +315,7 @@ def get_bot_health():
         return jsonify({"success": True, "data": health_data})
 
     except Exception as e:
-        logger.error("Fehler beim Health Check: {e}")
+        logger.error(f"Fehler beim Health Check: {e}")
         return (
             jsonify(
                 {

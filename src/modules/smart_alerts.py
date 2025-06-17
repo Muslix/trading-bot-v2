@@ -88,7 +88,7 @@ class SmartAlertManager:
         if not self.alert_rules.get(alert_type, {}).get("enabled", False):
             return False
 
-        alert_key = "{alert_type}_{key}"
+        alert_key = f"{alert_type}_{key}"
         now = datetime.now()
 
         if alert_key in self.alert_history:
@@ -164,7 +164,7 @@ class SmartAlertManager:
                     # db.update_arbitrage_alert_sent(alert_id)  # Update später wenn nötig
                     alerts_sent += 1
 
-                    self.logger.info("🚨 Arbitrage Alert gesendet: {symbol} ({opportunity['profit_percentage']:.1f}%)")
+                    self.logger.info(f"🚨 Arbitrage Alert gesendet: {symbol} ({opportunity['profit_percentage']:.1f}%)")
 
         return alerts_sent
 
@@ -209,7 +209,7 @@ class SmartAlertManager:
             if self._should_send_alert("sharpe_change", change["symbol"]):
                 # Erstelle Alert-Nachricht
                 direction_emoji = "📈" if change["direction"] == "UP" else "📉"
-                message = """
+                message = f"""
 {direction_emoji} *PERFORMANCE ALERT!*
 
 💎 *{change['symbol']}*
@@ -224,7 +224,7 @@ class SmartAlertManager:
 
                 if await crypto_bot.send_message(message):
                     alerts_sent += 1
-                    self.logger.info("📊 Performance Alert gesendet: {change['symbol']} ({change['change']:.2f})")
+                    self.logger.info(f"📊 Performance Alert gesendet: {change['symbol']} ({change['change']:.2f})")
 
         # Update Snapshot
         self.last_performance_snapshot = dict(current_performers)
@@ -274,7 +274,7 @@ class SmartAlertManager:
                 # Finde Metriken für diesen Symbol
                 symbol_metrics = next((metrics for sym, metrics in current_performers if sym == symbol), {})
 
-                message = """
+                message = f"""
 🌟 *NEUER TOP PERFORMER!*
 
 💎 *{symbol}* ist in die Top 5 aufgestiegen!
@@ -317,7 +317,7 @@ class SmartAlertManager:
             # Hole Arbitrage-Statistiken
             alerts_24h = db.get_recent_arbitrage_alerts(hours=24)
 
-            message = """
+            message = f"""
 🌅 *TÄGLICHER MARKT-REPORT*
 
 📊 *24h Übersicht:*
@@ -329,9 +329,9 @@ class SmartAlertManager:
 """
 
             for i, performer in enumerate(latest_performance[:3], 1):
-                message += "  {i}. *{performer['symbol']}* (Sharpe: {performer['sharpe_ratio']:.2f})\n"
+                message += f"  {i}. *{performer['symbol']}* (Sharpe: {performer['sharpe_ratio']:.2f})\n"
 
-            message += """
+            message += f"""
 📈 *Bot Status:*
 • System: Online 24/7
 • Letzte Analyse: {datetime.now().strftime('%H:%M')}
@@ -349,7 +349,7 @@ class SmartAlertManager:
                 return True
 
         except Exception as e:
-            self.logger.error("❌ Fehler beim Daily Summary: {e}")
+            self.logger.error(f"❌ Fehler beim Daily Summary: {e}")
 
         return False
 
@@ -390,7 +390,7 @@ class SmartAlertManager:
                     if abs(change_percent) >= threshold:
                         if self._should_send_alert("large_price_movement", symbol):
                             direction = "🚀" if change_percent > 0 else "📉"
-                            message = """
+                            message = f"""
 {direction} *GROSSE PREISBEWEGUNG!*
 
 💎 *{symbol}*
@@ -406,10 +406,10 @@ class SmartAlertManager:
 
                             if await crypto_bot.send_message(message):
                                 alerts_sent += 1
-                                self.logger.info("📊 Price Movement Alert gesendet: {symbol} ({change_percent:+.1f}%)")
+                                self.logger.info(f"📊 Price Movement Alert gesendet: {symbol} ({change_percent:+.1f}%)")
 
             except Exception as e:
-                self.logger.error("❌ Fehler bei Price Movement Check für {symbol}: {e}")
+                self.logger.error(f"❌ Fehler bei Price Movement Check für {symbol}: {e}")
 
         return alerts_sent
 

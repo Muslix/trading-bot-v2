@@ -41,7 +41,7 @@ class CryptoDatabaseManager:
             yield conn
         except Exception as e:
             conn.rollback()
-            self.logger.error("Database Fehler: {e}")
+            self.logger.error(f"Database Fehler: {e}")
             raise
         finally:
             conn.close()
@@ -227,7 +227,7 @@ class CryptoDatabaseManager:
 
         # Prüfe zuerst, ob ähnlicher Alert bereits existiert
         if self.check_recent_arbitrage_alert(opportunity, hours=6):
-            self.logger.debug("⏭️ Überspringe duplizierten Alert für {opportunity.get('symbol', 'UNKNOWN')}")
+            self.logger.debug(f"⏭️ Überspringe duplizierten Alert für {opportunity.get('symbol', 'UNKNOWN')}")
             return -1  # Negative ID zeigt an, dass nicht gespeichert wurde
 
         with self.get_connection() as conn:
