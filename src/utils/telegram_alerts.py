@@ -13,8 +13,10 @@ try:
 except ImportError:
     # Fallback for testing
     crypto_bot = None
+
     def log_error(msg, exception=None, context=None):
         print(f"ERROR: {msg}")
+
     def log_info(msg, context=None):
         print(f"INFO: {msg}")
 

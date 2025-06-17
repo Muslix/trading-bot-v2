@@ -9,6 +9,7 @@ import traceback
 from datetime import datetime
 from typing import Any, Dict, Optional
 
+
 # Configure structured logger
 def setup_error_logger(log_level: str = "INFO") -> logging.Logger:
     """Setup structured error logger"""
