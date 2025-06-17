@@ -14,8 +14,6 @@ from unittest.mock import AsyncMock, MagicMock, patch
 project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.append(project_root)
 
-# Create a comprehensive mock environment before importing
-
 
 def create_mock_config():
     mock_config_obj = MagicMock()
@@ -28,13 +26,19 @@ def create_mock_config():
     return mock_config_obj
 
 
-# Mock everything needed before importing
-with patch('src.modules.database.CryptoDatabaseManager'), \
-     patch('config.config.get_config', return_value=create_mock_config()), \
-     patch('src.modules.smart_alerts.crypto_bot'), \
-     patch('src.modules.smart_alerts.db'), \
-     patch('src.modules.telegram_bot.get_config', return_value=create_mock_config()):
+# Mock at sys.modules level to prevent actual module loading
+mock_database_module = MagicMock()
+mock_database_module.CryptoDatabaseManager = MagicMock()
+mock_database_module.db = MagicMock()
+sys.modules['src.modules.database'] = mock_database_module
 
+mock_telegram_module = MagicMock()
+mock_telegram_module.get_config = MagicMock(return_value=create_mock_config())
+mock_telegram_module.crypto_bot = MagicMock()
+sys.modules['src.modules.telegram_bot'] = mock_telegram_module
+
+# Now safe to import with mocked dependencies
+with patch('config.config.get_config', return_value=create_mock_config()):
     from src.modules.smart_alerts import SmartAlertManager
 
 
@@ -468,8 +472,12 @@ class TestSmartAlertManagerEdgeCases(unittest.IsolatedAsyncioTestCase):
         # Alert history should still be manageable
         self.assertLess(len(self.alert_manager.alert_history), 2000)
 
-    async def test_concurrent_alert_processing(self):
+    @patch('src.modules.smart_alerts.crypto_bot')
+    async def test_concurrent_alert_processing(self, mock_crypto_bot):
         """Test concurrent alert processing doesn't cause issues"""
+        # Mock the async method properly
+        mock_crypto_bot.send_arbitrage_alert = AsyncMock(return_value=True)
+        
         # Create multiple concurrent alert checks
         tasks = []
         for i in range(10):
