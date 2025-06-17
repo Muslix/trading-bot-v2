@@ -194,9 +194,9 @@ class TestPortfolioAnalysisEdgeCases:
 
     def test_large_symbol_list(self):
         """Test große Symbol-Liste (Performance)"""
-        large_symbols = [f"CRYPTO{i}" for i in range(100)]
+        large_symbols = ["CRYPTO{i}" for i in range(100)]
 
         results = analyze_crypto_portfolio_parallel(large_symbols)
 
         assert len(results) == 100
-        assert all(f"CRYPTO{i}" in results for i in range(100))
+        assert all("CRYPTO{i}" in results for i in range(100))

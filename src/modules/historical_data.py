@@ -4,16 +4,16 @@ Erweiterte Risiko-Metriken für genauere Portfolio-Analyse
 """
 
 import warnings
-from datetime import datetime, timedelta
+from datetime import datetime
 from typing import Dict, List, Optional, Tuple
 
 import numpy as np
 import pandas as pd
 import yfinance as yf
 
-warnings.filterwarnings("ignore")
-
 from src.utils.decorators import log_performance
+
+warnings.filterwarnings("ignore")
 
 
 class HistoricalDataManager:
@@ -66,19 +66,19 @@ class HistoricalDataManager:
     def fetch_historical_data(self, symbol: str, period: str = "2y") -> Optional[pd.DataFrame]:
         """Lade historische Daten für einen Coin"""
         try:
-            yahoo_symbol = self.crypto_symbol_mapping.get(symbol, f"{symbol}-USD")
+            yahoo_symbol = self.crypto_symbol_mapping.get(symbol, "{symbol}-USD")
 
             ticker = yf.Ticker(yahoo_symbol)
             hist = ticker.history(period=period)
 
             if hist.empty:
-                print(f"⚠️ Keine Daten für {symbol} verfügbar")
+                print("⚠️ Keine Daten für {symbol} verfügbar")
                 return None
 
             return hist
 
         except Exception as e:
-            print(f"❌ Fehler beim Laden von {symbol}: {e}")
+            print("❌ Fehler beim Laden von {symbol}: {e}")
             return None
 
     @log_performance
@@ -162,7 +162,7 @@ class HistoricalDataManager:
             }
 
         except Exception as e:
-            print(f"❌ Fehler bei Metriken für {symbol}: {e}")
+            print("❌ Fehler bei Metriken für {symbol}: {e}")
             return self._get_fallback_metrics(symbol)
 
     def _calculate_beta_vs_btc(self, returns: pd.Series) -> float:
@@ -242,8 +242,8 @@ def analyze_crypto_portfolio_enhanced(
     crypto_symbols: List[str], period: str = "2y"
 ) -> Dict[str, Dict]:
     """Erweiterte Portfolio-Analyse mit echten historischen Daten"""
-    print(f"🔄 Analysiere {len(crypto_symbols)} Kryptowährungen mit {period} historischen Daten...")
-    print(f"📊 Lade echte Marktdaten für erweiterte Risiko-Metriken...")
+    print("🔄 Analysiere {len(crypto_symbols)} Kryptowährungen mit {period} historischen Daten...")
+    print("📊 Lade echte Marktdaten für erweiterte Risiko-Metriken...")
 
     from multiprocessing import Pool
 

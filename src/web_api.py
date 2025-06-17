@@ -3,21 +3,25 @@ Web API Server für Crypto Trading Bot Dashboard
 Flask API zum Verbinden des Vue.js Frontends mit der SQLite Database
 """
 
+import logging
 import os
 import sys
+from datetime import datetime, timedelta
 
-from flask import Flask, jsonify, render_template_string, send_from_directory
+from flask import Flask, jsonify
 from flask_cors import CORS
 
 # Add project root to Python path
 project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(project_root)
 
-import logging
-from datetime import datetime, timedelta
-
-from src.modules.database import db
-from src.utils.symbol_normalizer import merge_duplicate_performance_data
+# Import project modules
+try:
+    from src.modules.database import db
+    from src.utils.symbol_normalizer import merge_duplicate_performance_data
+except ImportError as e:
+    logging.error(f"Import error in web_api: {e}")
+    sys.exit(1)
 
 # Flask App Setup
 app = Flask(__name__)
@@ -68,7 +72,7 @@ def get_dashboard_data():
         return jsonify({"success": True, "data": dashboard_data})
 
     except Exception as e:
-        logger.error(f"Fehler beim Abrufen der Dashboard-Daten: {e}")
+        logger.error("Fehler beim Abrufen der Dashboard-Daten: {e}")
         return jsonify({"success": False, "error": str(e)}), 500
 
 
@@ -85,7 +89,7 @@ def get_live_prices():
             cursor.execute(
                 """
                 SELECT symbol, exchange, price, timestamp
-                FROM price_history 
+                FROM price_history
                 WHERE timestamp >= ?
                 ORDER BY symbol, exchange, timestamp DESC
             """,
@@ -133,7 +137,7 @@ def get_live_prices():
         )
 
     except Exception as e:
-        logger.error(f"Fehler beim Abrufen der Live-Preise: {e}")
+        logger.error("Fehler beim Abrufen der Live-Preise: {e}")
         return jsonify({"success": False, "error": str(e)}), 500
 
 
@@ -146,7 +150,7 @@ def get_arbitrage_alerts():
         return jsonify({"success": True, "data": alerts, "count": len(alerts)})
 
     except Exception as e:
-        logger.error(f"Fehler beim Abrufen der Arbitrage-Alerts: {e}")
+        logger.error("Fehler beim Abrufen der Arbitrage-Alerts: {e}")
         return jsonify({"success": False, "error": str(e)}), 500
 
 
@@ -174,7 +178,7 @@ def get_performance_data():
         )
 
     except Exception as e:
-        logger.error(f"Fehler beim Abrufen der Performance-Daten: {e}")
+        logger.error("Fehler beim Abrufen der Performance-Daten: {e}")
         return jsonify({"success": False, "error": str(e)}), 500
 
 
@@ -200,7 +204,7 @@ def get_price_history(symbol):
         )
 
     except Exception as e:
-        logger.error(f"Fehler beim Abrufen der Preis-Historie für {symbol}: {e}")
+        logger.error("Fehler beim Abrufen der Preis-Historie für {symbol}: {e}")
         return jsonify({"success": False, "error": str(e)}), 500
 
 
@@ -213,7 +217,7 @@ def get_portfolio_snapshots():
 
             cursor.execute(
                 """
-                SELECT * FROM portfolio_snapshots 
+                SELECT * FROM portfolio_snapshots
                 WHERE timestamp >= datetime('now', '-1 day')
                 ORDER BY timestamp DESC
                 LIMIT 10
@@ -225,7 +229,7 @@ def get_portfolio_snapshots():
         return jsonify({"success": True, "data": snapshots, "count": len(snapshots)})
 
     except Exception as e:
-        logger.error(f"Fehler beim Abrufen der Portfolio-Snapshots: {e}")
+        logger.error("Fehler beim Abrufen der Portfolio-Snapshots: {e}")
         return jsonify({"success": False, "error": str(e)}), 500
 
 
@@ -239,11 +243,11 @@ def get_telegram_stats():
             # Nachrichten der letzten 24h
             cursor.execute(
                 """
-                SELECT 
+                SELECT
                     COUNT(*) as total_messages,
                     SUM(CASE WHEN success = 1 THEN 1 ELSE 0 END) as successful_messages,
                     COUNT(DISTINCT message_type) as message_types
-                FROM telegram_messages 
+                FROM telegram_messages
                 WHERE timestamp >= datetime('now', '-1 day')
             """
             )
@@ -253,10 +257,10 @@ def get_telegram_stats():
             # Letzte Nachrichten
             cursor.execute(
                 """
-                SELECT message_type, timestamp, success 
-                FROM telegram_messages 
+                SELECT message_type, timestamp, success
+                FROM telegram_messages
                 WHERE timestamp >= datetime('now', '-1 day')
-                ORDER BY timestamp DESC 
+                ORDER BY timestamp DESC
                 LIMIT 10
             """
             )
@@ -268,7 +272,7 @@ def get_telegram_stats():
         )
 
     except Exception as e:
-        logger.error(f"Fehler beim Abrufen der Telegram-Statistiken: {e}")
+        logger.error("Fehler beim Abrufen der Telegram-Statistiken: {e}")
         return jsonify({"success": False, "error": str(e)}), 500
 
 
@@ -301,8 +305,8 @@ def get_bot_health():
             # Bot-Statistiken
             cursor.execute(
                 """
-                SELECT * FROM bot_statistics 
-                ORDER BY timestamp DESC 
+                SELECT * FROM bot_statistics
+                ORDER BY timestamp DESC
                 LIMIT 1
             """
             )
@@ -323,7 +327,7 @@ def get_bot_health():
         return jsonify({"success": True, "data": health_data})
 
     except Exception as e:
-        logger.error(f"Fehler beim Health Check: {e}")
+        logger.error("Fehler beim Health Check: {e}")
         return (
             jsonify(
                 {
@@ -363,11 +367,11 @@ def test_api():
     ]
 
     for endpoint in endpoints:
-        print(f"   {endpoint}")
+        print("   {endpoint}")
 
-    print(f"\n🚀 Server bereit!")
-    print(f"   Frontend URL: http://{config.web_host}:{config.web_port}")
-    print(f"   API Base URL: http://{config.web_host}:{config.web_port}/api/")
+    print("\n🚀 Server bereit!")
+    print("   Frontend URL: http://{config.web_host}:{config.web_port}")
+    print("   API Base URL: http://{config.web_host}:{config.web_port}/api/")
     print("\n" + "=" * 40)
 
 

@@ -9,7 +9,7 @@ import os
 import sqlite3
 from contextlib import contextmanager
 from datetime import datetime, timedelta
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Tuple
 
 # Database Configuration
 # Database-Pfad mit relativer Pfadauflösung
@@ -30,7 +30,7 @@ class CryptoDatabaseManager:
     def _ensure_db_exists(self):
         """Stelle sicher dass Database-Datei existiert"""
         if not os.path.exists(self.db_path):
-            self.logger.info(f"📊 Erstelle neue SQLite Datenbank: {self.db_path}")
+            self.logger.info("📊 Erstelle neue SQLite Datenbank: {self.db_path}")
 
     @contextmanager
     def get_connection(self):
@@ -41,7 +41,7 @@ class CryptoDatabaseManager:
             yield conn
         except Exception as e:
             conn.rollback()
-            self.logger.error(f"Database Fehler: {e}")
+            self.logger.error("Database Fehler: {e}")
             raise
         finally:
             conn.close()
@@ -196,10 +196,10 @@ class CryptoDatabaseManager:
             # Erste Prüfung: Exakte Kombination von Symbol, Exchanges und ähnlichem Profit
             cursor.execute(
                 """
-                SELECT COUNT(*) as count FROM arbitrage_alerts 
-                WHERE symbol = ? 
-                AND buy_exchange = ? 
-                AND sell_exchange = ? 
+                SELECT COUNT(*) as count FROM arbitrage_alerts
+                WHERE symbol = ?
+                AND buy_exchange = ?
+                AND sell_exchange = ?
                 AND ABS(profit_percentage - ?) < 0.1  -- Sehr ähnlicher Profit (±0.1%)
                 AND timestamp >= ?
             """,
@@ -217,7 +217,7 @@ class CryptoDatabaseManager:
 
             if exists:
                 self.logger.debug(
-                    f"🔄 Ähnlicher Alert bereits vorhanden für {opportunity.get('symbol', 'UNKNOWN')} ({opportunity.get('profit_percentage', 0):.1f}%)"
+                    "🔄 Ähnlicher Alert bereits vorhanden für {opportunity.get('symbol', 'UNKNOWN')} ({opportunity.get('profit_percentage', 0):.1f}%)"
                 )
 
             return exists
@@ -228,7 +228,7 @@ class CryptoDatabaseManager:
         # Prüfe zuerst, ob ähnlicher Alert bereits existiert
         if self.check_recent_arbitrage_alert(opportunity, hours=6):
             self.logger.debug(
-                f"⏭️ Überspringe duplizierten Alert für {opportunity.get('symbol', 'UNKNOWN')}"
+                "⏭️ Überspringe duplizierten Alert für {opportunity.get('symbol', 'UNKNOWN')}"
             )
             return -1  # Negative ID zeigt an, dass nicht gespeichert wurde
 
@@ -237,8 +237,8 @@ class CryptoDatabaseManager:
 
             cursor.execute(
                 """
-                INSERT INTO arbitrage_alerts 
-                (symbol, buy_exchange, sell_exchange, buy_price, sell_price, 
+                INSERT INTO arbitrage_alerts
+                (symbol, buy_exchange, sell_exchange, buy_price, sell_price,
                  profit_percentage, profit_per_unit)
                 VALUES (?, ?, ?, ?, ?, ?, ?)
             """,
@@ -256,7 +256,7 @@ class CryptoDatabaseManager:
             conn.commit()
             alert_id = cursor.lastrowid
             self.logger.info(
-                f"💾 Arbitrage Alert gespeichert: {alert_id} - {opportunity.get('symbol', 'UNKNOWN')} ({opportunity.get('profit_percentage', 0):.1f}%)"
+                "💾 Arbitrage Alert gespeichert: {alert_id} - {opportunity.get('symbol', 'UNKNOWN')} ({opportunity.get('profit_percentage', 0):.1f}%)"
             )
             return alert_id
 
@@ -267,7 +267,7 @@ class CryptoDatabaseManager:
 
             cursor.execute(
                 """
-                UPDATE arbitrage_alerts 
+                UPDATE arbitrage_alerts
                 SET alert_sent = 1, telegram_message_id = ?
                 WHERE id = ?
             """,
@@ -285,8 +285,8 @@ class CryptoDatabaseManager:
 
             cursor.execute(
                 """
-                SELECT * FROM arbitrage_alerts 
-                WHERE timestamp >= ? 
+                SELECT * FROM arbitrage_alerts
+                WHERE timestamp >= ?
                 ORDER BY timestamp DESC
             """,
                 (since_time,),
@@ -310,7 +310,7 @@ class CryptoDatabaseManager:
 
             cursor.execute(
                 """
-                INSERT INTO price_history 
+                INSERT INTO price_history
                 (symbol, exchange, price, volume, bid, ask)
                 VALUES (?, ?, ?, ?, ?, ?)
             """,
@@ -329,7 +329,7 @@ class CryptoDatabaseManager:
             if exchange:
                 cursor.execute(
                     """
-                    SELECT * FROM price_history 
+                    SELECT * FROM price_history
                     WHERE symbol = ? AND exchange = ? AND timestamp >= ?
                     ORDER BY timestamp DESC
                 """,
@@ -338,7 +338,7 @@ class CryptoDatabaseManager:
             else:
                 cursor.execute(
                     """
-                    SELECT * FROM price_history 
+                    SELECT * FROM price_history
                     WHERE symbol = ? AND timestamp >= ?
                     ORDER BY timestamp DESC
                 """,
@@ -360,7 +360,7 @@ class CryptoDatabaseManager:
 
                 cursor.execute(
                     """
-                    INSERT INTO performance_data 
+                    INSERT INTO performance_data
                     (symbol, timeframe, sharpe_ratio, sortino_ratio, annual_return,
                      volatility, max_drawdown, var_95, beta_vs_btc, current_price,
                      data_source)
@@ -383,7 +383,7 @@ class CryptoDatabaseManager:
                 saved_count += 1
 
             conn.commit()
-            self.logger.info(f"💾 Performance-Daten gespeichert: {saved_count} Einträge")
+            self.logger.info("💾 Performance-Daten gespeichert: {saved_count} Einträge")
             return saved_count
 
     def get_latest_performance_data(self, limit: int = 20) -> List[Dict]:
@@ -395,9 +395,9 @@ class CryptoDatabaseManager:
                 """
                 SELECT DISTINCT symbol, sharpe_ratio, annual_return, current_price,
                        timestamp, timeframe
-                FROM performance_data 
+                FROM performance_data
                 WHERE timestamp >= date('now', '-1 day')
-                ORDER BY sharpe_ratio DESC 
+                ORDER BY sharpe_ratio DESC
                 LIMIT ?
             """,
                 (limit,),
@@ -429,8 +429,8 @@ class CryptoDatabaseManager:
 
             cursor.execute(
                 """
-                INSERT INTO portfolio_snapshots 
-                (snapshot_type, top_performers, total_coins_analyzed, 
+                INSERT INTO portfolio_snapshots
+                (snapshot_type, top_performers, total_coins_analyzed,
                  avg_sharpe_ratio, best_performer_symbol, best_performer_sharpe)
                 VALUES (?, ?, ?, ?, ?, ?)
             """,
@@ -446,7 +446,7 @@ class CryptoDatabaseManager:
 
             conn.commit()
             snapshot_id = cursor.lastrowid
-            self.logger.info(f"💾 Portfolio-Snapshot gespeichert: {snapshot_id}")
+            self.logger.info("💾 Portfolio-Snapshot gespeichert: {snapshot_id}")
             return snapshot_id
 
     # BOT STATISTICS METHODS
@@ -457,7 +457,7 @@ class CryptoDatabaseManager:
 
             cursor.execute(
                 """
-                INSERT INTO bot_statistics 
+                INSERT INTO bot_statistics
                 (total_arbitrage_checks, total_performance_analyses,
                  arbitrage_opportunities_found, alerts_sent, uptime_hours,
                  session_start)
@@ -491,8 +491,8 @@ class CryptoDatabaseManager:
 
             cursor.execute(
                 """
-                INSERT INTO telegram_messages 
-                (chat_id, message_type, message_text, success, 
+                INSERT INTO telegram_messages
+                (chat_id, message_type, message_text, success,
                  telegram_message_id, error_message)
                 VALUES (?, ?, ?, ?, ?, ?)
             """,
@@ -520,7 +520,7 @@ class CryptoDatabaseManager:
                 SELECT COUNT(*) as total_alerts,
                        AVG(profit_percentage) as avg_profit,
                        MAX(profit_percentage) as max_profit
-                FROM arbitrage_alerts 
+                FROM arbitrage_alerts
                 WHERE timestamp >= datetime('now', '-1 day')
             """
             )
@@ -532,7 +532,7 @@ class CryptoDatabaseManager:
                 SELECT COUNT(DISTINCT symbol) as total_coins,
                        AVG(sharpe_ratio) as avg_sharpe,
                        MAX(sharpe_ratio) as max_sharpe
-                FROM performance_data 
+                FROM performance_data
                 WHERE timestamp >= datetime('now', '-1 day')
             """
             )
@@ -543,7 +543,7 @@ class CryptoDatabaseManager:
                 """
                 SELECT COUNT(*) as total_messages,
                        SUM(CASE WHEN success = 1 THEN 1 ELSE 0 END) as successful_messages
-                FROM telegram_messages 
+                FROM telegram_messages
                 WHERE timestamp >= datetime('now', '-1 day')
             """
             )
@@ -568,15 +568,15 @@ class CryptoDatabaseManager:
 
             for table in tables_to_clean:
                 cursor.execute(
-                    f"""
-                    DELETE FROM {table} 
+                    """
+                    DELETE FROM {table}
                     WHERE timestamp < ?
                 """,
                     (cutoff_date,),
                 )
 
             conn.commit()
-            self.logger.info(f"🧹 Alte Daten bereinigt (älter als {days} Tage)")
+            self.logger.info("🧹 Alte Daten bereinigt (älter als {days} Tage)")
 
 
 # Global Database Instance
@@ -601,7 +601,7 @@ def test_database():
     }
 
     alert_id = db.save_arbitrage_alert(test_opportunity)
-    print(f"✅ Alert gespeichert mit ID: {alert_id}")
+    print("✅ Alert gespeichert mit ID: {alert_id}")
 
     # Test 2: Price Data speichern
     print("\n2. Teste Price Data...")
@@ -622,16 +622,16 @@ def test_database():
         }
     }
     saved_count = db.save_performance_data(test_performance)
-    print(f"✅ Performance Data gespeichert: {saved_count} Einträge")
+    print("✅ Performance Data gespeichert: {saved_count} Einträge")
 
     # Test 4: Dashboard Data
     print("\n4. Teste Dashboard Data...")
     dashboard_data = db.get_dashboard_data()
-    print(f"✅ Dashboard Data: {dashboard_data}")
+    print("✅ Dashboard Data: {dashboard_data}")
 
     print("\n" + "=" * 40)
     print("🎉 SQLite Database Tests erfolgreich!")
-    print(f"📊 Database-Datei: {db.db_path}")
+    print("📊 Database-Datei: {db.db_path}")
 
 
 if __name__ == "__main__":

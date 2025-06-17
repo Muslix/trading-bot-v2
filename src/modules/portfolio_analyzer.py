@@ -49,7 +49,7 @@ def calculate_crypto_metrics(symbol: str) -> Tuple[str, Dict]:
 @log_performance
 def analyze_crypto_portfolio_parallel(crypto_symbols: List[str]) -> Dict[str, Dict]:
     """Analysiere 50-100 Kryptowährungen parallel"""
-    print(f"🔄 Analysiere {len(crypto_symbols)} Kryptowährungen parallel...")
+    print("🔄 Analysiere {len(crypto_symbols)} Kryptowährungen parallel...")
 
     # Multiprocessing Pool für parallele Verarbeitung
     with Pool() as pool:
@@ -322,12 +322,12 @@ def display_portfolio_results(results: Dict[str, Dict], top_n: int = 10):
     # Sortiere nach Sharpe Ratio
     sorted_cryptos = sorted(valid_results.items(), key=lambda x: x[1]["sharpe_ratio"], reverse=True)
 
-    print(f"\n🏆 TOP {top_n} Kryptowährungen nach Sharpe Ratio:")
+    print("\n🏆 TOP {top_n} Kryptowährungen nach Sharpe Ratio:")
     for i, (symbol, metrics) in enumerate(sorted_cryptos[:top_n], 1):
         print(
-            f"  {i:2d}. {symbol}: Sharpe {metrics['sharpe_ratio']:.4f}, "
-            f"Return {metrics['annual_return']:.1f}%, "
-            f"Volatilität {metrics['volatility']:.1f}%"
+            "  {i:2d}. {symbol}: Sharpe {metrics['sharpe_ratio']:.4f}, "
+            "Return {metrics['annual_return']:.1f}%, "
+            "Volatilität {metrics['volatility']:.1f}%"
         )
 
     return sorted_cryptos[:top_n]

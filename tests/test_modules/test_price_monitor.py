@@ -4,7 +4,6 @@ Teste Async/IO Price Monitoring
 """
 
 import asyncio
-from unittest.mock import AsyncMock, patch
 
 import pytest
 
@@ -224,7 +223,7 @@ class TestUtilityFunctions:
         display_price_data(symbol, prices)
         captured = capsys.readouterr()
 
-        assert f"Aktuelle Preise für {symbol}" in captured.out
+        assert "Aktuelle Preise für {symbol}" in captured.out
         assert "BINANCE: $45,000.00" in captured.out
         assert "COINBASE: $45,100.00" in captured.out
         assert "KRAKEN: $44,900.00" in captured.out

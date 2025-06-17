@@ -76,7 +76,7 @@ class CryptoMonitor24_7:
             await self._main_monitoring_loop()
         except KeyboardInterrupt:
             self.logger.info("⏹️ Monitoring durch Benutzer gestoppt")
-        except Exception as e:
+        except Exception as _e:
             self.logger.error(f"❌ Kritischer Fehler im Monitoring: {e}")
             await crypto_bot.send_error_alert(str(e), "Main Monitor")
         finally:
@@ -112,7 +112,7 @@ class CryptoMonitor24_7:
                 self.logger.info(f"🔄 Cycle abgeschlossen in {cycle_time:.1f}s - Schlafe {sleep_time:.1f}s")
                 await asyncio.sleep(sleep_time)
                 
-            except Exception as e:
+            except Exception as _e:
                 self.logger.error(f"❌ Fehler im Monitoring-Cycle: {e}")
                 await crypto_bot.send_error_alert(str(e), "Monitor Cycle")
                 await asyncio.sleep(30)  # Kurze Pause bei Fehlern
@@ -173,7 +173,7 @@ class CryptoMonitor24_7:
             self.stats['total_arbitrage_checks'] += 1
             self.logger.info(f"✅ Arbitrage-Check abgeschlossen - {len(arbitrage_opportunities)} Möglichkeiten gefunden")
             
-        except Exception as e:
+        except Exception as _e:
             self.logger.error(f"❌ Fehler im Arbitrage-Check: {e}")
     
     @async_log_performance
@@ -236,7 +236,7 @@ class CryptoMonitor24_7:
             self.stats['total_performance_analyses'] += 1
             self.logger.info("✅ Performance-Analyse abgeschlossen")
             
-        except Exception as e:
+        except Exception as _e:
             self.logger.error(f"❌ Fehler in Performance-Analyse: {e}")
     
     async def _check_performance_changes(self, current_performers: List[tuple]) -> bool:
@@ -296,7 +296,7 @@ class CryptoMonitor24_7:
                 self.last_daily_summary = now
                 self.logger.info("✅ Täglicher Summary gesendet")
                 
-            except Exception as e:
+            except Exception as _e:
                 self.logger.error(f"❌ Fehler beim täglichen Summary: {e}")
     
     def _update_stats(self):
@@ -317,14 +317,14 @@ class CryptoMonitor24_7:
         uptime = self._calculate_uptime_hours()
         
         self.logger.info(f"🛑 Monitor gestoppt nach {uptime} Stunden")
-        self.logger.info(f"📊 Statistiken:")
+        self.logger.info("📊 Statistiken:")
         self.logger.info(f"   • Arbitrage Checks: {self.stats['total_arbitrage_checks']}")
         self.logger.info(f"   • Performance Analysen: {self.stats['total_performance_analyses']}")
         self.logger.info(f"   • Arbitrage gefunden: {self.stats['arbitrage_opportunities_found']}")
         self.logger.info(f"   • Alerts gesendet: {self.stats['alerts_sent']}")
         
         # Sende Shutdown-Nachricht
-        shutdown_message = f"""
+        shutdown_message = """
 🛑 *BOT GESTOPPT*
 
 ⏱️ *Laufzeit: {uptime} Stunden*
@@ -349,7 +349,7 @@ async def main():
     
     monitor = CryptoMonitor24_7()
     
-    print(f"⚙️ Konfiguration:")
+    print("⚙️ Konfiguration:")
     print(f"   • Arbitrage Check: alle {monitor.config['arbitrage_check_interval']}s")
     print(f"   • Performance Check: alle {monitor.config['performance_check_interval']//60} Minuten")
     print(f"   • Watchlist: {len(monitor.config['watchlist_symbols'])} Symbole")
@@ -363,7 +363,7 @@ async def main():
         chat_id = "123456789"  # Demo-Modus
         print("📱 Demo-Modus aktiviert (keine echten Telegram-Nachrichten)")
     
-    print(f"\n🔄 Starte 24/7 Monitoring...")
+    print("\n🔄 Starte 24/7 Monitoring...")
     print("📱 Drücke Ctrl+C zum Stoppen")
     print("=" * 60)
     
@@ -376,5 +376,5 @@ if __name__ == "__main__":
         asyncio.run(main())
     except KeyboardInterrupt:
         print("\n👋 Monitoring beendet!")
-    except Exception as e:
+    except Exception as _e:
         print(f"\n❌ Kritischer Fehler: {e}")

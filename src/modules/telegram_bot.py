@@ -13,25 +13,17 @@ from typing import Dict, List, Optional
 from telegram import Bot
 from telegram.constants import ParseMode
 
+# Setup path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-# Add src to path for imports
-sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "src"))
-# Add src to path for imports
 sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "src"))
 
-import os
-
-# Import Config
-import sys
-
-from src.utils.decorators import async_log_performance
-
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-# Add src to path for imports
-sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "src"))
-# Add src to path for imports
-sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "src"))
-from config.config import get_config
+# Import project modules
+try:
+    from config.config import get_config
+    from src.utils.decorators import async_log_performance
+except ImportError as e:
+    logging.error(f"Import error in telegram_bot: {e}")
+    sys.exit(1)
 
 config = get_config()
 
@@ -64,7 +56,7 @@ class TelegramCryptoBot:
     def set_chat_id(self, chat_id: str):
         """Setze die Chat ID für Nachrichten"""
         self.chat_id = chat_id
-        self.logger.info(f"Chat ID gesetzt: {chat_id}")
+        self.logger.info("Chat ID gesetzt: {chat_id}")
 
     async def get_chat_id_from_updates(self) -> Optional[str]:
         """Hole Chat ID aus aktuellen Updates (für Setup)"""
@@ -75,7 +67,7 @@ class TelegramCryptoBot:
                 return str(updates[-1].message.chat.id)
             return None
         except Exception as e:
-            self.logger.error(f"Fehler beim Abrufen der Chat ID: {e}")
+            self.logger.error("Fehler beim Abrufen der Chat ID: {e}")
             return None
 
     @async_log_performance
@@ -91,12 +83,12 @@ class TelegramCryptoBot:
             return True
 
         except Exception as e:
-            self.logger.error(f"Fehler beim Senden der Telegram Nachricht: {e}")
+            self.logger.error("Fehler beim Senden der Telegram Nachricht: {e}")
             return False
 
     def _should_send_alert(self, alert_type: str, key: str = "") -> bool:
         """Prüfe ob Alert gesendet werden soll (Spam-Protection)"""
-        alert_key = f"{alert_type}_{key}"
+        alert_key = "{alert_type}_{key}"
         now = datetime.now()
 
         if alert_key in self.alert_cooldowns:
@@ -133,7 +125,7 @@ class TelegramCryptoBot:
         # Erstelle Alert-Nachricht
         best_opp = max(significant_opportunities, key=lambda x: x.get("profit_percentage", 0))
 
-        message = f"""
+        message = """
 🚨 *ARBITRAGE ALERT!* 🚨
 
 💎 *{best_opp['symbol']}*
@@ -161,7 +153,7 @@ class TelegramCryptoBot:
         if not self._should_send_alert("performance", timeframe):
             return False
 
-        message = f"""
+        message = """
 📊 *TOP PERFORMER UPDATE* ({timeframe})
 
 """
@@ -172,10 +164,10 @@ class TelegramCryptoBot:
 
             if sharpe > 1.0:  # Nur gute Performer
                 emoji = "🚀" if i == 1 else "📈" if i <= 3 else "⭐"
-                message += f"{emoji} *{i}. {symbol}*\n"
-                message += f"   Sharpe: *{sharpe:.2f}* | Return: *{returns:.1f}%*\n\n"
+                message += "{emoji} *{i}. {symbol}*\n"
+                message += "   Sharpe: *{sharpe:.2f}* | Return: *{returns:.1f}%*\n\n"
 
-        message += f"⏰ {datetime.now().strftime('%H:%M:%S')}"
+        message += "⏰ {datetime.now().strftime('%H:%M:%S')}"
 
         return await self.send_message(message)
 
@@ -187,7 +179,7 @@ class TelegramCryptoBot:
         top_crypto = market_data.get("best_performer", {})
         analyzed_coins = market_data.get("analyzed_coins", 0)
 
-        message = f"""
+        message = """
 🌅 *TÄGLICHER MARKT-REPORT*
 
 📊 *Markt-Übersicht:*
@@ -209,7 +201,7 @@ class TelegramCryptoBot:
     @async_log_performance
     async def send_startup_message(self) -> bool:
         """Sende Bot-Start Nachricht"""
-        message = f"""
+        message = """
 🤖 *CRYPTO TRADING BOT GESTARTET!*
 
 ✅ *Aktive Features:*
@@ -236,11 +228,11 @@ class TelegramCryptoBot:
         if not self._should_send_alert("error", module):
             return False
 
-        message = f"""
+        message = """
 ⚠️ *BOT ERROR ALERT*
 
 🔧 Module: *{module or 'Unknown'}*
-❌ Error: `{error_msg[:200]}...` 
+❌ Error: `{error_msg[:200]}...`
 
 🔄 Bot versucht automatisch weiterzulaufen...
 ⏰ {datetime.now().strftime('%H:%M:%S')}
@@ -252,9 +244,9 @@ class TelegramCryptoBot:
         """Teste Bot-Verbindung"""
         try:
             bot_info = await self.bot.get_me()
-            self.logger.info(f"Bot verbunden: @{bot_info.username}")
+            self.logger.info("Bot verbunden: @{bot_info.username}")
 
-            test_message = f"""
+            test_message = """
 🧪 *TEST NACHRICHT*
 
 ✅ Bot ist online und bereit!
@@ -270,7 +262,7 @@ Schreibe /start um zu beginnen.
             return True
 
         except Exception as e:
-            self.logger.error(f"Bot-Verbindungstest fehlgeschlagen: {e}")
+            self.logger.error("Bot-Verbindungstest fehlgeschlagen: {e}")
             return False
 
 
@@ -296,7 +288,7 @@ async def setup_telegram_bot() -> bool:
 
     if chat_id:
         crypto_bot.set_chat_id(chat_id)
-        print(f"✅ Chat ID gefunden: {chat_id}")
+        print("✅ Chat ID gefunden: {chat_id}")
     else:
         print("⚠️ Keine Chat ID gefunden.")
         print("💡 Schreibe eine Nachricht an @crypto_muslix_bot und führe das Setup erneut aus.")
@@ -312,8 +304,8 @@ async def setup_telegram_bot() -> bool:
 
     print("\n" + "=" * 50)
     print("🎉 TELEGRAM BOT SETUP ERFOLGREICH!")
-    print(f"📱 Bot: @crypto_muslix_bot")
-    print(f"💬 Chat ID: {chat_id}")
+    print("📱 Bot: @crypto_muslix_bot")
+    print("💬 Chat ID: {chat_id}")
     print("🚀 Bot ist bereit für 24/7 Monitoring!")
 
     return True

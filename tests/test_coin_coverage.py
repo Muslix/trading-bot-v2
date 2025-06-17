@@ -46,11 +46,11 @@ class CoinCoverageTest:
             # Teste verschiedene Konfigurationen
             for count in [10, 50, 100]:
                 coins = get_top_cryptocurrencies(count)
-                print(f"   ✅ {count} Coins angefordert: {len(coins)} erhalten")
+                print("   ✅ {count} Coins angefordert: {len(coins)} erhalten")
 
                 if len(coins) != count:
                     self.test_results["errors"].append(
-                        f"Konfiguration {count}: Erwartet {count}, erhalten {len(coins)}"
+                        "Konfiguration {count}: Erwartet {count}, erhalten {len(coins)}"
                     )
 
             # Teste die aktuelle Konfiguration
@@ -58,14 +58,14 @@ class CoinCoverageTest:
             configured_coins = get_top_cryptocurrencies(configured_count)
             self.test_results["total_configured"] = len(configured_coins)
 
-            print(f"   📊 Aktuelle Konfiguration: {configured_count} Coins")
-            print(f"   📝 Verfügbare Coins: {len(configured_coins)}")
-            print(f"   🔢 Erste 10 Coins: {configured_coins[:10]}")
+            print("   📊 Aktuelle Konfiguration: {configured_count} Coins")
+            print("   📝 Verfügbare Coins: {len(configured_coins)}")
+            print("   🔢 Erste 10 Coins: {configured_coins[:10]}")
 
             return True
 
         except Exception as e:
-            self.test_results["errors"].append(f"Konfigurationstest fehlgeschlagen: {e}")
+            self.test_results["errors"].append("Konfigurationstest fehlgeschlagen: {e}")
             return False
 
     def test_batch_processing(self):
@@ -78,9 +78,9 @@ class CoinCoverageTest:
             batch_size = 30
             total_batches = (len(total_coins) + batch_size - 1) // batch_size
 
-            print(f"   📊 Total Coins: {len(total_coins)}")
-            print(f"   📦 Batch Size: {batch_size}")
-            print(f"   🔢 Total Batches: {total_batches}")
+            print("   📊 Total Coins: {len(total_coins)}")
+            print("   📦 Batch Size: {batch_size}")
+            print("   🔢 Total Batches: {total_batches}")
 
             all_batched_coins = []
             for batch_idx in range(total_batches):
@@ -90,7 +90,7 @@ class CoinCoverageTest:
                 all_batched_coins.extend(batch_coins)
 
                 print(
-                    f"   📦 Batch {batch_idx + 1}: Indizes {start_idx}-{end_idx-1}, {len(batch_coins)} Coins"
+                    "   📦 Batch {batch_idx + 1}: Indizes {start_idx}-{end_idx-1}, {len(batch_coins)} Coins"
                 )
 
             # Überprüfe, ob alle Coins erfasst wurden
@@ -99,15 +99,15 @@ class CoinCoverageTest:
                 self.test_results["batch_test_passed"] = True
             else:
                 error = (
-                    f"Batch-Processing unvollständig: {len(all_batched_coins)}/{len(total_coins)}"
+                    "Batch-Processing unvollständig: {len(all_batched_coins)}/{len(total_coins)}"
                 )
                 self.test_results["errors"].append(error)
-                print(f"   ❌ {error}")
+                print("   ❌ {error}")
 
             return self.test_results["batch_test_passed"]
 
         except Exception as e:
-            self.test_results["errors"].append(f"Batch-Processing Test fehlgeschlagen: {e}")
+            self.test_results["errors"].append("Batch-Processing Test fehlgeschlagen: {e}")
             return False
 
     def test_database_coverage(self):
@@ -130,16 +130,16 @@ class CoinCoverageTest:
                 cursor.execute("SELECT DISTINCT symbol FROM performance_data ORDER BY symbol")
                 db_coins = [row["symbol"] for row in cursor.fetchall()]
 
-                print(f"   📊 Coins in Datenbank: {db_coin_count}")
-                print(f"   📝 DB Coins: {db_coins[:20]}{'...' if len(db_coins) > 20 else ''}")
+                print("   📊 Coins in Datenbank: {db_coin_count}")
+                print("   📝 DB Coins: {db_coins[:20]}{'...' if len(db_coins) > 20 else ''}")
 
                 # Überprüfe Aktualität der Daten
                 cursor.execute(
                     """
                     SELECT symbol, MAX(timestamp) as last_update, COUNT(*) as entries
-                    FROM performance_data 
-                    GROUP BY symbol 
-                    ORDER BY last_update DESC 
+                    FROM performance_data
+                    GROUP BY symbol
+                    ORDER BY last_update DESC
                     LIMIT 10
                 """
                 )
@@ -148,7 +148,7 @@ class CoinCoverageTest:
                 print("   🕒 Neueste Updates:")
                 for coin in recent_coins:
                     print(
-                        f"      {coin['symbol']}: {coin['last_update']} ({coin['entries']} Einträge)"
+                        "      {coin['symbol']}: {coin['last_update']} ({coin['entries']} Einträge)"
                     )
 
                 # Überprüfe, ob genug Coins analysiert wurden
@@ -156,18 +156,18 @@ class CoinCoverageTest:
                 coverage_percentage = (db_coin_count / configured_count) * 100
 
                 print(
-                    f"   📈 Coverage: {coverage_percentage:.1f}% ({db_coin_count}/{configured_count})"
+                    "   📈 Coverage: {coverage_percentage:.1f}% ({db_coin_count}/{configured_count})"
                 )
 
                 if coverage_percentage < 20:  # Weniger als 20% ist problematisch
                     self.test_results["errors"].append(
-                        f"Zu wenig Coins analysiert: {coverage_percentage:.1f}%"
+                        "Zu wenig Coins analysiert: {coverage_percentage:.1f}%"
                     )
 
                 return db_coin_count > 0
 
         except Exception as e:
-            self.test_results["errors"].append(f"Database Coverage Test fehlgeschlagen: {e}")
+            self.test_results["errors"].append("Database Coverage Test fehlgeschlagen: {e}")
             return False
 
     def test_api_coverage(self):
@@ -187,34 +187,34 @@ class CoinCoverageTest:
                     api_coin_count = data.get("count", 0)
                     self.test_results["api_coins"] = api_coin_count
 
-                    print(f"   📊 API liefert: {api_coin_count} Coins")
-                    print(f"   📈 Original Count: {data.get('original_count', 'unknown')}")
-                    print(f"   🧹 Duplikate entfernt: {data.get('duplicates_removed', 'unknown')}")
+                    print("   📊 API liefert: {api_coin_count} Coins")
+                    print("   📈 Original Count: {data.get('original_count', 'unknown')}")
+                    print("   🧹 Duplikate entfernt: {data.get('duplicates_removed', 'unknown')}")
 
                     # Überprüfe, ob API-Count mit DB-Count übereinstimmt
                     if api_coin_count == self.test_results["database_coins"]:
                         print("   ✅ API Count stimmt mit DB Count überein")
                     else:
-                        error = f"API/DB Mismatch: API={api_coin_count}, DB={self.test_results['database_coins']}"
+                        error = "API/DB Mismatch: API={api_coin_count}, DB={self.test_results['database_coins']}"
                         self.test_results["errors"].append(error)
-                        print(f"   ⚠️ {error}")
+                        print("   ⚠️ {error}")
 
                     return True
                 else:
-                    error = f"API Fehler: {data.get('error', 'Unknown error')}"
+                    error = "API Fehler: {data.get('error', 'Unknown error')}"
                     self.test_results["errors"].append(error)
-                    print(f"   ❌ {error}")
+                    print("   ❌ {error}")
                     return False
             else:
-                error = f"API nicht erreichbar: HTTP {response.status_code}"
+                error = "API nicht erreichbar: HTTP {response.status_code}"
                 self.test_results["errors"].append(error)
-                print(f"   ❌ {error}")
+                print("   ❌ {error}")
                 return False
 
         except Exception as e:
-            error = f"API Test fehlgeschlagen: {e}"
+            error = "API Test fehlgeschlagen: {e}"
             self.test_results["errors"].append(error)
-            print(f"   ❌ {error}")
+            print("   ❌ {error}")
             return False
 
     def test_analysis_performance(self):
@@ -226,7 +226,7 @@ class CoinCoverageTest:
             performance_results = {}
 
             for size in test_sizes:
-                print(f"   📊 Teste Analyse mit {size} Coins...")
+                print("   📊 Teste Analyse mit {size} Coins...")
 
                 test_coins = get_top_cryptocurrencies(size)
                 start_time = time.time()
@@ -243,9 +243,9 @@ class CoinCoverageTest:
                     "success_rate": (len(results) / size * 100) if results and size > 0 else 0,
                 }
 
-                print(f"      ⏱️ Dauer: {duration:.2f}s")
-                print(f"      ✅ Erfolgreich: {len(results) if results else 0}/{size}")
-                print(f"      📈 Success Rate: {performance_results[size]['success_rate']:.1f}%")
+                print("      ⏱️ Dauer: {duration:.2f}s")
+                print("      ✅ Erfolgreich: {len(results) if results else 0}/{size}")
+                print("      📈 Success Rate: {performance_results[size]['success_rate']:.1f}%")
 
             # Berechne Durchschnittszeit pro Coin
             if performance_results:
@@ -254,20 +254,20 @@ class CoinCoverageTest:
                 ) / len(performance_results)
                 estimated_time_100 = avg_time_per_coin * 100
 
-                print(f"   ⏱️ Durchschnittliche Zeit pro Coin: {avg_time_per_coin:.3f}s")
+                print("   ⏱️ Durchschnittliche Zeit pro Coin: {avg_time_per_coin:.3f}s")
                 print(
-                    f"   🕐 Geschätzte Zeit für 100 Coins: {estimated_time_100:.1f}s ({estimated_time_100/60:.1f} Minuten)"
+                    "   🕐 Geschätzte Zeit für 100 Coins: {estimated_time_100:.1f}s ({estimated_time_100/60:.1f} Minuten)"
                 )
 
                 if estimated_time_100 > 300:  # Mehr als 5 Minuten
                     self.test_results["errors"].append(
-                        f"Analyse zu langsam: {estimated_time_100:.1f}s für 100 Coins"
+                        "Analyse zu langsam: {estimated_time_100:.1f}s für 100 Coins"
                     )
 
             return True
 
         except Exception as e:
-            self.test_results["errors"].append(f"Performance Test fehlgeschlagen: {e}")
+            self.test_results["errors"].append("Performance Test fehlgeschlagen: {e}")
             return False
 
     def run_all_tests(self):
@@ -292,8 +292,8 @@ class CoinCoverageTest:
                     passed_tests += 1
                 print()  # Leerzeile zwischen Tests
             except Exception as e:
-                self.test_results["errors"].append(f"{test_method.__name__} crashed: {e}")
-                print(f"   💥 Test crashed: {e}")
+                self.test_results["errors"].append("{test_method.__name__} crashed: {e}")
+                print("   💥 Test crashed: {e}")
 
         self.print_summary(passed_tests, total_tests)
         return passed_tests == total_tests
@@ -302,18 +302,18 @@ class CoinCoverageTest:
         """Drucke Test-Zusammenfassung"""
         print("📊 TEST SUMMARY")
         print("=" * 50)
-        print(f"✅ Tests bestanden: {passed_tests}/{total_tests}")
-        print(f"📊 Konfigurierte Coins: {self.test_results['total_configured']}")
-        print(f"💾 DB Coins: {self.test_results['database_coins']}")
-        print(f"🌐 API Coins: {self.test_results['api_coins']}")
+        print("✅ Tests bestanden: {passed_tests}/{total_tests}")
+        print("📊 Konfigurierte Coins: {self.test_results['total_configured']}")
+        print("💾 DB Coins: {self.test_results['database_coins']}")
+        print("🌐 API Coins: {self.test_results['api_coins']}")
         print(
-            f"📦 Batch Processing: {'✅ OK' if self.test_results['batch_test_passed'] else '❌ FAILED'}"
+            "📦 Batch Processing: {'✅ OK' if self.test_results['batch_test_passed'] else '❌ FAILED'}"
         )
 
         if self.test_results["errors"]:
             print("\n❌ FEHLER:")
             for error in self.test_results["errors"]:
-                print(f"   • {error}")
+                print("   • {error}")
         else:
             print("\n🎉 Alle Tests erfolgreich!")
 

@@ -31,7 +31,7 @@ class IntegratedTestSuite:
 
     def run_test_script(self, script_path, test_name):
         """Führe ein Test-Script aus"""
-        print(f"🚀 Starte {test_name}...")
+        print("🚀 Starte {test_name}...")
         print("=" * 60)
 
         try:
@@ -53,16 +53,16 @@ class IntegratedTestSuite:
 
             if success:
                 self.results["total_passed"] += 1
-                print(f"✅ {test_name} BESTANDEN")
+                print("✅ {test_name} BESTANDEN")
             else:
                 self.results["total_failed"] += 1
-                print(f"❌ {test_name} FEHLGESCHLAGEN (Exit Code: {result.returncode})")
+                print("❌ {test_name} FEHLGESCHLAGEN (Exit Code: {result.returncode})")
 
             print()  # Leerzeile
             return success
 
         except subprocess.TimeoutExpired:
-            print(f"⏰ {test_name} TIMEOUT (>5 Minuten)")
+            print("⏰ {test_name} TIMEOUT (>5 Minuten)")
             self.results["total_failed"] += 1
             self.results["tests_run"].append(
                 {
@@ -76,7 +76,7 @@ class IntegratedTestSuite:
             return False
 
         except Exception as e:
-            print(f"💥 {test_name} CRASHED: {e}")
+            print("💥 {test_name} CRASHED: {e}")
             self.results["total_failed"] += 1
             self.results["tests_run"].append(
                 {
@@ -104,7 +104,7 @@ class IntegratedTestSuite:
                 cursor = conn.cursor()
                 cursor.execute("SELECT COUNT(*) FROM performance_data")
                 count = cursor.fetchone()[0]
-                checks.append(("Database erreichbar", True, f"{count} Performance-Datensätze"))
+                checks.append(("Database erreichbar", True, "{count} Performance-Datensätze"))
         except Exception as e:
             checks.append(("Database erreichbar", False, str(e)))
 
@@ -114,10 +114,10 @@ class IntegratedTestSuite:
 
             response = requests.get("http://localhost:5000/api/performance-data", timeout=5)
             api_working = response.status_code == 200
-            api_info = f"HTTP {response.status_code}" if not api_working else "API OK"
+            api_info = "HTTP {response.status_code}" if not api_working else "API OK"
             checks.append(("Web API erreichbar", api_working, api_info))
         except Exception as e:
-            checks.append(("Web API erreichbar", False, f"Nicht erreichbar: {e}"))
+            checks.append(("Web API erreichbar", False, "Nicht erreichbar: {e}"))
 
         # 3. Konfiguration geladen
         try:
@@ -125,7 +125,7 @@ class IntegratedTestSuite:
 
             config = get_config()
             crypto_count = config.analysis_crypto_count
-            checks.append(("Konfiguration geladen", True, f"Analysis Count: {crypto_count}"))
+            checks.append(("Konfiguration geladen", True, "Analysis Count: {crypto_count}"))
         except Exception as e:
             checks.append(("Konfiguration geladen", False, str(e)))
 
@@ -133,7 +133,7 @@ class IntegratedTestSuite:
         all_critical_passed = True
         for check_name, passed, info in checks:
             status = "✅" if passed else "❌"
-            print(f"   {status} {check_name}: {info}")
+            print("   {status} {check_name}: {info}")
 
             # API ist optional, aber Database und Config sind kritisch
             if not passed and check_name in ["Database erreichbar", "Konfiguration geladen"]:
@@ -146,7 +146,7 @@ class IntegratedTestSuite:
         """Führe alle Tests aus"""
         print("🚀 INTEGRIERTE SYSTEM TEST SUITE")
         print("=" * 60)
-        print(f"Start Zeit: {self.results['start_time'].strftime('%Y-%m-%d %H:%M:%S')}")
+        print("Start Zeit: {self.results['start_time'].strftime('%Y-%m-%d %H:%M:%S')}")
         print()
 
         # Voraussetzungen prüfen
@@ -168,7 +168,7 @@ class IntegratedTestSuite:
                 if not success:
                     all_passed = False
             else:
-                print(f"⚠️ Test-Script nicht gefunden: {script_path}")
+                print("⚠️ Test-Script nicht gefunden: {script_path}")
                 all_passed = False
 
         # System-Gesundheit bewerten
@@ -184,13 +184,13 @@ class IntegratedTestSuite:
 
         print("📊 FINAL TEST SUMMARY")
         print("=" * 60)
-        print(f"⏱️ Gesamtdauer: {duration.total_seconds():.1f} Sekunden")
-        print(f"✅ Tests bestanden: {self.results['total_passed']}")
-        print(f"❌ Tests fehlgeschlagen: {self.results['total_failed']}")
-        print(f"📊 Gesamt Tests: {len(self.results['tests_run'])}")
+        print("⏱️ Gesamtdauer: {duration.total_seconds():.1f} Sekunden")
+        print("✅ Tests bestanden: {self.results['total_passed']}")
+        print("❌ Tests fehlgeschlagen: {self.results['total_failed']}")
+        print("📊 Gesamt Tests: {len(self.results['tests_run'])}")
 
         print(
-            f"\n🏥 System Status: {'✅ GESUND' if self.results['system_healthy'] else '❌ PROBLEME'}"
+            "\n🏥 System Status: {'✅ GESUND' if self.results['system_healthy'] else '❌ PROBLEME'}"
         )
 
         if self.results["tests_run"]:
@@ -198,14 +198,14 @@ class IntegratedTestSuite:
             for test in self.results["tests_run"]:
                 status = "✅" if test["success"] else "❌"
                 error_info = (
-                    f" ({test.get('error', 'Exit ' + str(test['return_code']))})"
+                    " ({test.get('error', 'Exit ' + str(test['return_code']))})"
                     if not test["success"]
                     else ""
                 )
-                print(f"   {status} {test['name']}{error_info}")
+                print("   {status} {test['name']}{error_info}")
 
         # Empfehlungen
-        print(f"\n💡 EMPFEHLUNGEN:")
+        print("\n💡 EMPFEHLUNGEN:")
         if self.results["system_healthy"]:
             print("   • System läuft optimal! 🚀")
             print("   • Alle Coin-Coverage und Duplikate-Tests bestanden")

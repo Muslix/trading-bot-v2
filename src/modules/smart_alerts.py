@@ -7,19 +7,22 @@ import asyncio
 import logging
 import os
 import sys
-from datetime import datetime, time, timedelta
-from typing import Dict, List, Optional, Tuple
+from datetime import datetime, timedelta
+from typing import Dict, List, Tuple
 
+# Setup paths
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-# Add src to path for imports
-sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "src"))
-# Add src to path for imports
 sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "src"))
 
-from config.config import get_config
-from src.modules.database import db
-from src.modules.telegram_bot import crypto_bot
-from src.utils.decorators import async_log_performance
+# Import project modules
+try:
+    from config.config import get_config
+    from src.modules.database import db
+    from src.modules.telegram_bot import crypto_bot
+    from src.utils.decorators import async_log_performance
+except ImportError as e:
+    logging.error(f"Import error in smart_alerts: {e}")
+    sys.exit(1)
 
 config = get_config()
 
@@ -85,7 +88,7 @@ class SmartAlertManager:
         if not self.alert_rules.get(alert_type, {}).get("enabled", False):
             return False
 
-        alert_key = f"{alert_type}_{key}"
+        alert_key = "{alert_type}_{key}"
         now = datetime.now()
 
         if alert_key in self.alert_history:
@@ -166,7 +169,7 @@ class SmartAlertManager:
                     alerts_sent += 1
 
                     self.logger.info(
-                        f"🚨 Arbitrage Alert gesendet: {symbol} ({opportunity['profit_percentage']:.1f}%)"
+                        "🚨 Arbitrage Alert gesendet: {symbol} ({opportunity['profit_percentage']:.1f}%)"
                     )
 
         return alerts_sent
@@ -213,10 +216,10 @@ class SmartAlertManager:
 
                 # Erstelle Alert-Nachricht
                 direction_emoji = "📈" if change["direction"] == "UP" else "📉"
-                message = f"""
+                message = """
 {direction_emoji} *PERFORMANCE ALERT!*
 
-💎 *{change['symbol']}* 
+💎 *{change['symbol']}*
 📊 Sharpe Ratio Änderung: *{change['change']:.2f}*
 
 {change['direction']}:
@@ -229,7 +232,7 @@ class SmartAlertManager:
                 if await crypto_bot.send_message(message):
                     alerts_sent += 1
                     self.logger.info(
-                        f"📊 Performance Alert gesendet: {change['symbol']} ({change['change']:.2f})"
+                        "📊 Performance Alert gesendet: {change['symbol']} ({change['change']:.2f})"
                     )
 
         # Update Snapshot
@@ -254,9 +257,9 @@ class SmartAlertManager:
 
                 cursor.execute(
                     """
-                    SELECT symbol, best_performer_sharpe FROM portfolio_snapshots 
+                    SELECT symbol, best_performer_sharpe FROM portfolio_snapshots
                     WHERE timestamp >= datetime('now', '-1 day')
-                    ORDER BY timestamp DESC 
+                    ORDER BY timestamp DESC
                     LIMIT 5
                 """
                 )
@@ -266,7 +269,7 @@ class SmartAlertManager:
                     for row in cursor.fetchall()
                     if row["best_performer_sharpe"] >= min_sharpe
                 )
-        except:
+        except Exception:
             old_top_performers = set()
 
         # Aktuelle Top Performer
@@ -287,7 +290,7 @@ class SmartAlertManager:
                     (metrics for sym, metrics in current_performers if sym == symbol), {}
                 )
 
-                message = f"""
+                message = """
 🌟 *NEUER TOP PERFORMER!*
 
 💎 *{symbol}* ist in die Top 5 aufgestiegen!
@@ -303,7 +306,7 @@ class SmartAlertManager:
 
                 if await crypto_bot.send_message(message):
                     alerts_sent += 1
-                    self.logger.info(f"🌟 New Top Performer Alert gesendet: {symbol}")
+                    self.logger.info("🌟 New Top Performer Alert gesendet: {symbol}")
 
         return alerts_sent
 
@@ -330,7 +333,7 @@ class SmartAlertManager:
             # Hole Arbitrage-Statistiken
             alerts_24h = db.get_recent_arbitrage_alerts(hours=24)
 
-            message = f"""
+            message = """
 🌅 *TÄGLICHER MARKT-REPORT*
 
 📊 *24h Übersicht:*
@@ -343,10 +346,10 @@ class SmartAlertManager:
 
             for i, performer in enumerate(latest_performance[:3], 1):
                 message += (
-                    f"  {i}. *{performer['symbol']}* (Sharpe: {performer['sharpe_ratio']:.2f})\n"
+                    "  {i}. *{performer['symbol']}* (Sharpe: {performer['sharpe_ratio']:.2f})\n"
                 )
 
-            message += f"""
+            message += """
 📈 *Bot Status:*
 • System: Online 24/7
 • Letzte Analyse: {datetime.now().strftime('%H:%M')}
@@ -364,7 +367,7 @@ class SmartAlertManager:
                 return True
 
         except Exception as e:
-            self.logger.error(f"❌ Fehler beim Daily Summary: {e}")
+            self.logger.error("❌ Fehler beim Daily Summary: {e}")
 
         return False
 
@@ -386,7 +389,7 @@ class SmartAlertManager:
                     cursor.execute(
                         """
                         SELECT AVG(price) as avg_price
-                        FROM price_history 
+                        FROM price_history
                         WHERE symbol = ? AND timestamp <= ? AND timestamp >= ?
                     """,
                         (symbol, one_hour_ago, one_hour_ago - timedelta(minutes=10)),
@@ -406,7 +409,7 @@ class SmartAlertManager:
                         if self._should_send_alert("large_price_movement", symbol):
 
                             direction = "🚀" if change_percent > 0 else "📉"
-                            message = f"""
+                            message = """
 {direction} *GROSSE PREISBEWEGUNG!*
 
 💎 *{symbol}*
@@ -423,11 +426,11 @@ class SmartAlertManager:
                             if await crypto_bot.send_message(message):
                                 alerts_sent += 1
                                 self.logger.info(
-                                    f"📊 Price Movement Alert gesendet: {symbol} ({change_percent:+.1f}%)"
+                                    "📊 Price Movement Alert gesendet: {symbol} ({change_percent:+.1f}%)"
                                 )
 
             except Exception as e:
-                self.logger.error(f"❌ Fehler bei Price Movement Check für {symbol}: {e}")
+                self.logger.error("❌ Fehler bei Price Movement Check für {symbol}: {e}")
 
         return alerts_sent
 
@@ -480,11 +483,11 @@ class SmartAlertManager:
 
             if results["total_alerts"] > 0:
                 self.logger.info(
-                    f"📬 Smart Alerts verarbeitet: {results['total_alerts']} Alerts gesendet"
+                    "📬 Smart Alerts verarbeitet: {results['total_alerts']} Alerts gesendet"
                 )
 
         except Exception as e:
-            self.logger.error(f"❌ Fehler beim Verarbeiten der Smart Alerts: {e}")
+            self.logger.error("❌ Fehler beim Verarbeiten der Smart Alerts: {e}")
 
         return results
 
@@ -515,8 +518,8 @@ async def test_smart_alerts():
     # Test 1: Alert Rules
     print("1. Alert-Regeln:")
     stats = smart_alerts.get_alert_stats()
-    print(f"   • Konfigurierte Regeln: {stats['rules_configured']}")
-    print(f"   • Aktivierte Regeln: {stats['rules_enabled']}")
+    print("   • Konfigurierte Regeln: {stats['rules_configured']}")
+    print("   • Aktivierte Regeln: {stats['rules_enabled']}")
 
     # Test 2: Arbitrage Alert
     print("\n2. Teste Arbitrage Alert...")
@@ -533,7 +536,7 @@ async def test_smart_alerts():
     ]
 
     result = await smart_alerts.check_arbitrage_alerts(test_arbitrage)
-    print(f"   ✅ Arbitrage Alerts: {result}")
+    print("   ✅ Arbitrage Alerts: {result}")
 
     # Test 3: Performance Alert
     print("\n3. Teste Performance Alert...")
@@ -543,12 +546,12 @@ async def test_smart_alerts():
     ]
 
     result = await smart_alerts.check_performance_change_alerts(test_performance)
-    print(f"   ✅ Performance Alerts: {result}")
+    print("   ✅ Performance Alerts: {result}")
 
     # Test 4: Daily Summary (Force)
     print("\n4. Teste Daily Summary...")
     result = await smart_alerts.check_daily_summary_alert(force=True)
-    print(f"   ✅ Daily Summary: {'Gesendet' if result else 'Nicht gesendet'}")
+    print("   ✅ Daily Summary: {'Gesendet' if result else 'Nicht gesendet'}")
 
     print("\n" + "=" * 50)
     print("🎉 Smart Alerts Tests abgeschlossen!")

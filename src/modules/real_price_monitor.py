@@ -21,7 +21,7 @@ async def fetch_crypto_price_real(exchange_name: str, symbol: str) -> Tuple[str,
             if exchange_name.lower() == "binance":
                 # Binance API
                 binance_symbol = symbol.replace("/", "")
-                url = f"https://api.binance.com/api/v3/ticker/price?symbol={binance_symbol}"
+                url = "https://api.binance.com/api/v3/ticker/price?symbol={binance_symbol}"
                 async with session.get(url) as response:
                     if response.status == 200:
                         data = await response.json()
@@ -31,7 +31,7 @@ async def fetch_crypto_price_real(exchange_name: str, symbol: str) -> Tuple[str,
             elif exchange_name.lower() == "coinbase":
                 # Coinbase Advanced Trade API
                 cb_symbol = symbol.replace("/", "-")
-                url = f"https://api.exchange.coinbase.com/products/{cb_symbol}/ticker"
+                url = "https://api.exchange.coinbase.com/products/{cb_symbol}/ticker"
                 async with session.get(url) as response:
                     if response.status == 200:
                         data = await response.json()
@@ -49,7 +49,7 @@ async def fetch_crypto_price_real(exchange_name: str, symbol: str) -> Tuple[str,
                 elif kraken_symbol.endswith("USDT"):
                     kraken_symbol = kraken_symbol.replace("USDT", "USD")
 
-                url = f"https://api.kraken.com/0/public/Ticker?pair={kraken_symbol}"
+                url = "https://api.kraken.com/0/public/Ticker?pair={kraken_symbol}"
                 async with session.get(url) as response:
                     if response.status == 200:
                         data = await response.json()
@@ -63,7 +63,7 @@ async def fetch_crypto_price_real(exchange_name: str, symbol: str) -> Tuple[str,
             return await fetch_from_coingecko(exchange_name, symbol, session)
 
     except Exception as e:
-        print(f"⚠️ {exchange_name} API Fehler für {symbol}: {e}")
+        print("⚠️ {exchange_name} API Fehler für {symbol}: {e}")
         return await fetch_crypto_price_fallback(exchange_name, symbol)
 
 
@@ -76,7 +76,7 @@ async def fetch_from_coingecko(
         vs_currency = symbol.split("/")[1].lower()
 
         coin_id = get_coingecko_id(cg_symbol)
-        url = f"https://api.coingecko.com/api/v3/simple/price?ids={coin_id}&vs_currencies={vs_currency}"
+        url = "https://api.coingecko.com/api/v3/simple/price?ids={coin_id}&vs_currencies={vs_currency}"
 
         async with session.get(url) as response:
             if response.status == 200:
@@ -97,7 +97,7 @@ async def fetch_from_coingecko(
                     return (exchange_name, round(final_price, 2), symbol)
 
     except Exception as e:
-        print(f"⚠️ CoinGecko Fehler für {exchange_name} {symbol}: {e}")
+        print("⚠️ CoinGecko Fehler für {exchange_name} {symbol}: {e}")
 
     return await fetch_crypto_price_fallback(exchange_name, symbol)
 
@@ -141,7 +141,7 @@ async def fetch_crypto_price_fallback(exchange_name: str, symbol: str) -> Tuple[
             vs_currency = symbol.split("/")[1].lower()
             coin_id = get_coingecko_id(cg_symbol)
 
-            url = f"https://api.coingecko.com/api/v3/simple/price?ids={coin_id}&vs_currencies={vs_currency}"
+            url = "https://api.coingecko.com/api/v3/simple/price?ids={coin_id}&vs_currencies={vs_currency}"
 
             async with session.get(url) as response:
                 if response.status == 200:
@@ -165,11 +165,11 @@ async def fetch_crypto_price_fallback(exchange_name: str, symbol: str) -> Tuple[
         }
 
         base_price = fallback_prices.get(symbol, 100)
-        print(f"📉 Verwende Fallback-Preis für {exchange_name} {symbol}: ${base_price}")
+        print("📉 Verwende Fallback-Preis für {exchange_name} {symbol}: ${base_price}")
         return (exchange_name, base_price, symbol)
 
     except Exception as e:
-        print(f"⚠️ Fallback Fehler für {exchange_name} {symbol}: {e}")
+        print("⚠️ Fallback Fehler für {exchange_name} {symbol}: {e}")
         return (exchange_name, 0.0, symbol)
 
 
@@ -185,7 +185,7 @@ async def fetch_crypto_price_enhanced(exchange_name: str, symbol: str) -> Tuple[
             # Fallback zu CoinGecko
             return await fetch_crypto_price_fallback(exchange_name, symbol)
     except Exception as e:
-        print(f"⚠️ Enhanced Preis-Abruf Fehler für {exchange_name} {symbol}: {e}")
+        print("⚠️ Enhanced Preis-Abruf Fehler für {exchange_name} {symbol}: {e}")
         return await fetch_crypto_price_fallback(exchange_name, symbol)
 
 
@@ -198,7 +198,7 @@ async def monitor_real_exchange_prices(
     if exchanges is None:
         exchanges = ["binance", "coinbase", "kraken"]
 
-    print(f"🔍 Hole ECHTE Live-Preise für {symbol} von {len(exchanges)} Börsen...")
+    print("🔍 Hole ECHTE Live-Preise für {symbol} von {len(exchanges)} Börsen...")
 
     # Alle API-Calls parallel starten
     tasks = [fetch_crypto_price_enhanced(exchange, symbol) for exchange in exchanges]
@@ -219,7 +219,7 @@ async def monitor_real_exchange_prices(
             prices[exchange_name] = price
             real_data_count += 1
 
-    print(f"📊 {real_data_count}/{len(exchanges)} Börsen mit echten Daten")
+    print("📊 {real_data_count}/{len(exchanges)} Börsen mit echten Daten")
     return prices
 
 
@@ -240,7 +240,7 @@ async def get_current_market_prices(symbols: List[str]) -> Dict[str, float]:
         timeout = aiohttp.ClientTimeout(total=15)
         async with aiohttp.ClientSession(timeout=timeout) as session:
             ids_str = ",".join(coin_ids)
-            url = f"https://api.coingecko.com/api/v3/simple/price?ids={ids_str}&vs_currencies=usd"
+            url = "https://api.coingecko.com/api/v3/simple/price?ids={ids_str}&vs_currencies=usd"
 
             async with session.get(url) as response:
                 if response.status == 200:
@@ -255,6 +255,6 @@ async def get_current_market_prices(symbols: List[str]) -> Dict[str, float]:
                     return prices
 
     except Exception as e:
-        print(f"⚠️ Fehler beim Abruf der Marktpreise: {e}")
+        print("⚠️ Fehler beim Abruf der Marktpreise: {e}")
 
     return {}

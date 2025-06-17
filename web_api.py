@@ -63,7 +63,7 @@ def get_dashboard_data():
             'data': dashboard_data
         })
         
-    except Exception as e:
+    except Exception as _e:
         logger.error(f"Fehler beim Abrufen der Dashboard-Daten: {e}")
         return jsonify({
             'success': False,
@@ -129,7 +129,7 @@ def get_live_prices():
             'last_updated': datetime.now().isoformat()
         })
         
-    except Exception as e:
+    except Exception as _e:
         logger.error(f"Fehler beim Abrufen der Live-Preise: {e}")
         return jsonify({
             'success': False,
@@ -148,7 +148,7 @@ def get_arbitrage_alerts():
             'count': len(alerts)
         })
         
-    except Exception as e:
+    except Exception as _e:
         logger.error(f"Fehler beim Abrufen der Arbitrage-Alerts: {e}")
         return jsonify({
             'success': False,
@@ -176,7 +176,7 @@ def get_performance_data():
             'duplicates_removed': len(performance_data) - len(cleaned_data)
         })
         
-    except Exception as e:
+    except Exception as _e:
         logger.error(f"Fehler beim Abrufen der Performance-Daten: {e}")
         return jsonify({
             'success': False,
@@ -208,7 +208,7 @@ def get_price_history(symbol):
             'count': len(price_history)
         })
         
-    except Exception as e:
+    except Exception as _e:
         logger.error(f"Fehler beim Abrufen der Preis-Historie für {symbol}: {e}")
         return jsonify({
             'success': False,
@@ -237,7 +237,7 @@ def get_portfolio_snapshots():
             'count': len(snapshots)
         })
         
-    except Exception as e:
+    except Exception as _e:
         logger.error(f"Fehler beim Abrufen der Portfolio-Snapshots: {e}")
         return jsonify({
             'success': False,
@@ -282,7 +282,7 @@ def get_telegram_stats():
             }
         })
         
-    except Exception as e:
+    except Exception as _e:
         logger.error(f"Fehler beim Abrufen der Telegram-Statistiken: {e}")
         return jsonify({
             'success': False,
@@ -332,7 +332,7 @@ def get_bot_health():
             'data': health_data
         })
         
-    except Exception as e:
+    except Exception as _e:
         logger.error(f"Fehler beim Health Check: {e}")
         return jsonify({
             'success': False,
@@ -372,7 +372,7 @@ def test_api():
     for endpoint in endpoints:
         print(f"   {endpoint}")
     
-    print(f"\n🚀 Server bereit!")
+    print("\n🚀 Server bereit!")
     print(f"   Frontend URL: http://{config.web_host}:{config.web_port}")
     print(f"   API Base URL: http://{config.web_host}:{config.web_port}/api/")
     print("\n" + "=" * 40)

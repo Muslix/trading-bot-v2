@@ -3,11 +3,9 @@ import time
 import warnings
 from functools import wraps
 from multiprocessing import Pool
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Tuple
 
-import ccxt
 import numpy as np
-import pandas as pd
 
 warnings.filterwarnings("ignore")
 
@@ -27,11 +25,11 @@ def log_performance(func):
         try:
             result = func(*args, **kwargs)
             execution_time = time.time() - start_time
-            print(f"✅ {function_name} - {execution_time:.2f}s")
+            print("✅ {function_name} - {execution_time:.2f}s")
             return result
         except Exception as e:
             execution_time = time.time() - start_time
-            print(f"❌ {function_name} FEHLER nach {execution_time:.2f}s: {str(e)}")
+            print("❌ {function_name} FEHLER nach {execution_time:.2f}s: {str(e)}")
             raise e
 
     return wrapper
@@ -48,11 +46,11 @@ def async_log_performance(func):
         try:
             result = await func(*args, **kwargs)
             execution_time = time.time() - start_time
-            print(f"✅ {function_name} - {execution_time:.2f}s")
+            print("✅ {function_name} - {execution_time:.2f}s")
             return result
         except Exception as e:
             execution_time = time.time() - start_time
-            print(f"❌ {function_name} FEHLER nach {execution_time:.2f}s: {str(e)}")
+            print("❌ {function_name} FEHLER nach {execution_time:.2f}s: {str(e)}")
             raise e
 
     return wrapper
@@ -100,7 +98,7 @@ def calculate_crypto_metrics(symbol: str) -> Tuple[str, Dict]:
 @log_performance
 def analyze_crypto_portfolio_parallel(crypto_symbols: List[str]) -> Dict[str, Dict]:
     """Analysiere 50-100 Kryptowährungen parallel"""
-    print(f"🔄 Analysiere {len(crypto_symbols)} Kryptowährungen parallel...")
+    print("🔄 Analysiere {len(crypto_symbols)} Kryptowährungen parallel...")
 
     with Pool() as pool:
         results = pool.map(calculate_crypto_metrics, crypto_symbols)
@@ -150,7 +148,7 @@ async def fetch_crypto_price(exchange_name: str, symbol: str) -> Tuple[str, floa
         return (exchange_name, round(final_price, 2), symbol)
 
     except Exception as e:
-        print(f"⚠️ {exchange_name} API Fehler für {symbol}: {e}")
+        print("⚠️ {exchange_name} API Fehler für {symbol}: {e}")
         return (exchange_name, 0.0, symbol)
 
 
@@ -159,7 +157,7 @@ async def monitor_multi_exchange_prices(symbol: str) -> Dict[str, float]:
     """Live-Preise von Binance, Coinbase, Kraken gleichzeitig abholen"""
 
     exchanges = ["binance", "coinbase", "kraken"]
-    print(f"🔍 Überwache {symbol} auf {len(exchanges)} Börsen gleichzeitig...")
+    print("🔍 Überwache {symbol} auf {len(exchanges)} Börsen gleichzeitig...")
 
     # Alle API-Calls parallel starten
     tasks = [fetch_crypto_price(exchange, symbol) for exchange in exchanges]
@@ -226,12 +224,12 @@ def alert_system(opportunities: List[Dict], min_profit: float = 1.0):
 
     for opp in opportunities:
         if opp["profit_percent"] >= min_profit:
-            alert = f"🚨 ARBITRAGE ALERT! {opp['profit_percent']:.2f}% Profit möglich!"
-            alert += f"\n   📈 Kaufe auf {opp['buy_exchange'].upper()}: ${opp['buy_price']:,.2f}"
+            alert = "🚨 ARBITRAGE ALERT! {opp['profit_percent']:.2f}% Profit möglich!"
+            alert += "\n   📈 Kaufe auf {opp['buy_exchange'].upper()}: ${opp['buy_price']:,.2f}"
             alert += (
-                f"\n   📉 Verkaufe auf {opp['sell_exchange'].upper()}: ${opp['sell_price']:,.2f}"
+                "\n   📉 Verkaufe auf {opp['sell_exchange'].upper()}: ${opp['sell_price']:,.2f}"
             )
-            alert += f"\n   💰 Profit pro Einheit: ${opp['profit_per_unit']:,.2f}"
+            alert += "\n   💰 Profit pro Einheit: ${opp['profit_per_unit']:,.2f}"
 
             alerts.append(alert)
             print(alert)
@@ -253,21 +251,21 @@ async def crypto_screener():
     crypto_symbols = ["BTC/USDT", "ETH/USDT", "BNB/USDT", "ADA/USDT", "DOT/USDT"]
 
     for symbol in crypto_symbols:
-        print(f"\n📊 Analysiere {symbol}...")
+        print("\n📊 Analysiere {symbol}...")
 
         # Live-Preise von allen Börsen gleichzeitig abholen
         prices = await monitor_multi_exchange_prices(symbol)
 
         if prices:
-            print(f"💰 Aktuelle Preise für {symbol}:")
+            print("💰 Aktuelle Preise für {symbol}:")
             for exchange, price in prices.items():
-                print(f"   {exchange.upper()}: ${price:,.2f}")
+                print("   {exchange.upper()}: ${price:,.2f}")
 
             # Arbitrage-Möglichkeiten erkennen
             opportunities = detect_arbitrage_opportunities(prices, threshold=0.01)
 
             if opportunities:
-                print(f"🎯 Arbitrage-Möglichkeiten gefunden:")
+                print("🎯 Arbitrage-Möglichkeiten gefunden:")
                 alert_system(opportunities, min_profit=1.0)
             else:
                 print("✅ Keine Arbitrage-Möglichkeiten > 1%")
@@ -341,7 +339,7 @@ def crypto_portfolio_analyzer():
         "BAT",
     ]
 
-    print(f"🔄 Analysiere {len(crypto_symbols)} Kryptowährungen...")
+    print("🔄 Analysiere {len(crypto_symbols)} Kryptowährungen...")
     print("📈 Berechne Sharpe Ratios, Volatilität, Korrelationen parallel...")
 
     # Sequentielle Analyse zum Vergleich
@@ -360,20 +358,20 @@ def crypto_portfolio_analyzer():
     valid_results = {k: v for k, v in parallel_results.items() if "error" not in v}
     sorted_cryptos = sorted(valid_results.items(), key=lambda x: x[1]["sharpe_ratio"], reverse=True)
 
-    print(f"\n🏆 TOP 10 Kryptowährungen nach Sharpe Ratio:")
+    print("\n🏆 TOP 10 Kryptowährungen nach Sharpe Ratio:")
     for i, (symbol, metrics) in enumerate(sorted_cryptos[:10], 1):
         print(
-            f"  {i:2d}. {symbol}: Sharpe {metrics['sharpe_ratio']}, "
-            f"Return {metrics['annual_return']:.1f}%, "
-            f"Volatilität {metrics['volatility']:.1f}%"
+            "  {i:2d}. {symbol}: Sharpe {metrics['sharpe_ratio']}, "
+            "Return {metrics['annual_return']:.1f}%, "
+            "Volatilität {metrics['volatility']:.1f}%"
         )
 
     # Performance-Vergleich
     speedup = sequential_time / parallel_time if parallel_time > 0 else 0
-    print(f"\n⚡ Performance-Vergleich:")
-    print(f"   Sequential (10 Coins): {sequential_time:.2f}s")
-    print(f"   Parallel (50 Coins): {parallel_time:.2f}s")
-    print(f"   Speedup: {speedup:.1f}x - Statt 10 Minuten nur 2 Minuten!")
+    print("\n⚡ Performance-Vergleich:")
+    print("   Sequential (10 Coins): {sequential_time:.2f}s")
+    print("   Parallel (50 Coins): {parallel_time:.2f}s")
+    print("   Speedup: {speedup:.1f}x - Statt 10 Minuten nur 2 Minuten!")
 
 
 # =============================================================================

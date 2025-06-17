@@ -9,32 +9,26 @@ import os
 import sys
 import time
 from datetime import datetime, timedelta
-from typing import Dict, List, Optional
+from typing import List
 
 # Add project root to Python path
 project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(project_root)
 
-from config.config import get_config
-from src.modules.arbitrage_detector import (
-    detect_arbitrage_opportunities,
-    get_best_arbitrage_opportunity,
-)
-from src.modules.database import db
-from src.modules.historical_data import (
-    analyze_crypto_portfolio_enhanced,
-    compare_timeframes,
-)
-from src.modules.portfolio_analyzer import get_top_cryptocurrencies
-
-# Import eigene Module
-from src.modules.real_price_monitor import (
-    get_current_market_prices,
-    monitor_real_exchange_prices,
-)
-from src.modules.smart_alerts import smart_alerts
-from src.modules.telegram_bot import crypto_bot
-from src.utils.decorators import async_log_performance
+# Now import project modules
+try:
+    from config.config import get_config
+    from src.modules.arbitrage_detector import detect_arbitrage_opportunities
+    from src.modules.database import db
+    from src.modules.historical_data import analyze_crypto_portfolio_enhanced
+    from src.modules.portfolio_analyzer import get_top_cryptocurrencies
+    from src.modules.real_price_monitor import monitor_real_exchange_prices
+    from src.modules.smart_alerts import smart_alerts
+    from src.modules.telegram_bot import crypto_bot
+    from src.utils.decorators import async_log_performance
+except ImportError as e:
+    logging.error(f"Import error: {e}")
+    sys.exit(1)
 
 config = get_config()
 
@@ -90,7 +84,7 @@ class CryptoMonitor24_7:
         except KeyboardInterrupt:
             self.logger.info("⏹️ Monitoring durch Benutzer gestoppt")
         except Exception as e:
-            self.logger.error(f"❌ Kritischer Fehler im Monitoring: {e}")
+            self.logger.error("❌ Kritischer Fehler im Monitoring: {e}")
             await crypto_bot.send_error_alert(str(e), "Main Monitor")
         finally:
             await self._shutdown()
@@ -123,12 +117,12 @@ class CryptoMonitor24_7:
                 sleep_time = max(1, self.config["arbitrage_check_interval"] - cycle_time)
 
                 self.logger.info(
-                    f"🔄 Cycle abgeschlossen in {cycle_time:.1f}s - Schlafe {sleep_time:.1f}s"
+                    "🔄 Cycle abgeschlossen in {cycle_time:.1f}s - Schlafe {sleep_time:.1f}s"
                 )
                 await asyncio.sleep(sleep_time)
 
             except Exception as e:
-                self.logger.error(f"❌ Fehler im Monitoring-Cycle: {e}")
+                self.logger.error("❌ Fehler im Monitoring-Cycle: {e}")
                 await crypto_bot.send_error_alert(str(e), "Monitor Cycle")
                 await asyncio.sleep(30)  # Kurze Pause bei Fehlern
 
@@ -188,11 +182,11 @@ class CryptoMonitor24_7:
 
             self.stats["total_arbitrage_checks"] += 1
             self.logger.info(
-                f"✅ Arbitrage-Check abgeschlossen - {len(arbitrage_opportunities)} Möglichkeiten gefunden"
+                "✅ Arbitrage-Check abgeschlossen - {len(arbitrage_opportunities)} Möglichkeiten gefunden"
             )
 
         except Exception as e:
-            self.logger.error(f"❌ Fehler im Arbitrage-Check: {e}")
+            self.logger.error("❌ Fehler im Arbitrage-Check: {e}")
 
     @async_log_performance
     async def _performance_check_cycle(self):
@@ -221,7 +215,7 @@ class CryptoMonitor24_7:
             current_symbols = crypto_symbols[start_idx:end_idx]
 
             self.logger.info(
-                f"📊 Analysiere Batch {current_batch + 1}/{total_batches}: {len(current_symbols)} Coins (Indizes {start_idx}-{end_idx-1})"
+                "📊 Analysiere Batch {current_batch + 1}/{total_batches}: {len(current_symbols)} Coins (Indizes {start_idx}-{end_idx-1})"
             )
 
             # Analysiere mit historischen Daten
@@ -260,7 +254,7 @@ class CryptoMonitor24_7:
             self.logger.info("✅ Performance-Analyse abgeschlossen")
 
         except Exception as e:
-            self.logger.error(f"❌ Fehler in Performance-Analyse: {e}")
+            self.logger.error("❌ Fehler in Performance-Analyse: {e}")
 
     async def _check_performance_changes(self, current_performers: List[tuple]) -> bool:
         """Prüfe ob sich Performance signifikant geändert hat"""
@@ -280,7 +274,7 @@ class CryptoMonitor24_7:
                     )
                     if sharpe_change >= crypto_bot.alert_config["sharpe_change_threshold"]:
                         self.logger.info(
-                            f"📈 Signifikante Sharpe-Änderung bei {current_symbol}: {sharpe_change:.2f}"
+                            "📈 Signifikante Sharpe-Änderung bei {current_symbol}: {sharpe_change:.2f}"
                         )
                         return True
 
@@ -322,7 +316,7 @@ class CryptoMonitor24_7:
                 self.logger.info("✅ Täglicher Summary gesendet")
 
             except Exception as e:
-                self.logger.error(f"❌ Fehler beim täglichen Summary: {e}")
+                self.logger.error("❌ Fehler beim täglichen Summary: {e}")
 
     def _update_stats(self):
         """Update interne Statistiken"""
@@ -341,22 +335,22 @@ class CryptoMonitor24_7:
         self.running = False
         uptime = self._calculate_uptime_hours()
 
-        self.logger.info(f"🛑 Monitor gestoppt nach {uptime} Stunden")
-        self.logger.info(f"📊 Statistiken:")
-        self.logger.info(f"   • Arbitrage Checks: {self.stats['total_arbitrage_checks']}")
-        self.logger.info(f"   • Performance Analysen: {self.stats['total_performance_analyses']}")
-        self.logger.info(f"   • Arbitrage gefunden: {self.stats['arbitrage_opportunities_found']}")
-        self.logger.info(f"   • Alerts gesendet: {self.stats['alerts_sent']}")
+        self.logger.info("🛑 Monitor gestoppt nach {uptime} Stunden")
+        self.logger.info("📊 Statistiken:")
+        self.logger.info("   • Arbitrage Checks: {self.stats['total_arbitrage_checks']}")
+        self.logger.info("   • Performance Analysen: {self.stats['total_performance_analyses']}")
+        self.logger.info("   • Arbitrage gefunden: {self.stats['arbitrage_opportunities_found']}")
+        self.logger.info("   • Alerts gesendet: {self.stats['alerts_sent']}")
 
         # Sende Shutdown-Nachricht
-        shutdown_message = f"""
+        shutdown_message = """
 🛑 *BOT GESTOPPT*
 
 ⏱️ *Laufzeit: {uptime} Stunden*
 
 📊 *Session-Statistiken:*
 • Arbitrage Checks: {self.stats['total_arbitrage_checks']}
-• Performance Analysen: {self.stats['total_performance_analyses']}  
+• Performance Analysen: {self.stats['total_performance_analyses']}
 • Arbitrage gefunden: {self.stats['arbitrage_opportunities_found']}
 • Alerts gesendet: {self.stats['alerts_sent']}
 
@@ -374,14 +368,12 @@ async def main():
 
     monitor = CryptoMonitor24_7()
 
-    print(f"⚙️ Konfiguration:")
-    print(f"   • Arbitrage Check: alle {monitor.config['arbitrage_check_interval']}s")
-    print(
-        f"   • Performance Check: alle {monitor.config['performance_check_interval']//60} Minuten"
-    )
-    print(f"   • Watchlist: {len(monitor.config['watchlist_symbols'])} Symbole")
-    print(f"   • Analysis Cryptos: {monitor.config['analysis_crypto_count']}")
-    print(f"   • Daily Summary: {monitor.config['daily_summary_hour']}:00 Uhr")
+    print("⚙️ Konfiguration:")
+    print("   • Arbitrage Check: alle {monitor.config['arbitrage_check_interval']}s")
+    print("   • Performance Check: alle {monitor.config['performance_check_interval']//60} Minuten")
+    print("   • Watchlist: {len(monitor.config['watchlist_symbols'])} Symbole")
+    print("   • Analysis Cryptos: {monitor.config['analysis_crypto_count']}")
+    print("   • Daily Summary: {monitor.config['daily_summary_hour']}:00 Uhr")
     print()
 
     # Chat ID eingeben (in Produktion automatisch)
@@ -390,7 +382,7 @@ async def main():
         chat_id = "123456789"  # Demo-Modus
         print("📱 Demo-Modus aktiviert (keine echten Telegram-Nachrichten)")
 
-    print(f"\n🔄 Starte 24/7 Monitoring...")
+    print("\n🔄 Starte 24/7 Monitoring...")
     print("📱 Drücke Ctrl+C zum Stoppen")
     print("=" * 60)
 
@@ -404,4 +396,4 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         print("\n👋 Monitoring beendet!")
     except Exception as e:
-        print(f"\n❌ Kritischer Fehler: {e}")
+        print("\n❌ Kritischer Fehler: {e}")
