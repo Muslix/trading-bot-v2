@@ -1,114 +1,105 @@
-# 🤖 Crypto Trading Bot 24/7 - Advanced Multi-Exchange Arbitrage System
+# 🤖 Crypto Trading Bot v2.0
 
-Ein intelligenter Kryptowährungs-Trading-Bot mit 24/7-Überwachung, Arbitrage-Erkennung und automatischen Alerts.
+[![CI/CD Pipeline](https://github.com/Muslix/trading-bot-v2/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/Muslix/trading-bot-v2/actions/workflows/ci-cd.yml)
+[![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
+[![Docker](https://img.shields.io/badge/docker-ready-blue.svg)](https://hub.docker.com/r/muslix/crypto-trading-bot)
+[![Security](https://img.shields.io/badge/security-audited-green.svg)](#security)
 
-## 📁 Projektstruktur
+Ein fortschrittlicher, vollautomatischer Kryptowährungs-Trading-Bot mit Echtzeit-Überwachung, intelligenten Alerts und einer benutzerfreundlichen Web-Dashboard.
 
-```
-crypto_trading_bot_v2/                 # Hauptprojektverzeichnis
-├── 📂 modules/                        # Kernmodule
-│   ├── 🔍 arbitrage_detector.py       # Arbitrage-Erkennung
-│   ├── 💾 database.py                 # SQLite Database Management
-│   ├── 📊 historical_data.py          # Historische Datenanalyse
-│   ├── 📈 portfolio_analyzer.py       # Portfolio Performance Analyse
-│   ├── 💲 price_monitor.py            # Preisüberwachung (Legacy)
-│   ├── 💲 real_price_monitor.py       # Echte Multi-Exchange Preise
-│   ├── 🚨 smart_alerts.py             # Intelligentes Alert-System
-│   └── 📱 telegram_bot.py             # Telegram Notifications
-├── 📂 utils/                          # Hilfsfunktionen
-│   └── ⚡ decorators.py               # Performance & Logging Decorators
-├── 📂 tests/                          # Unit Tests
-│   ├── test_integration.py            # Integrationstests
-│   └── 📂 test_modules/               # Modul-spezifische Tests
-├── 📂 scripts/                        # 🆕 Test & Utility Scripts
-│   ├── test_telegram.py               # Telegram Bot Tests
-│   ├── test_24_7_monitor.py           # Monitor System Tests
-│   ├── test_web_api.py                # Web API Tests
-│   ├── run_24h_test.py                # 24h Volltest
-│   ├── run_tests.py                   # Unit Test Runner
-│   └── README.sh                      # Scripts Übersicht
-├── 📂 frontend/                       # Web Dashboard
-│   └── index.html                     # Vue.js Dashboard
-├── 📄 main.py                         # Haupt-Analysetool
-├── 🔄 crypto_monitor_24_7.py          # 24/7 Monitoring System
-├── 🌐 web_api.py                      # Flask Web API
-├── ⚙️ config.py                       # Konfigurationslader
-├── 🚀 start_bot.py                    # Bot Starter
-├── 📊 crypto_trading_bot.db           # SQLite Database
-└── 🔧 requirements.txt                # Python Dependencies
-```
+## ✨ Features
 
-## 🚀 Features
+### 🚀 Core Trading Features
+- **Echtzeitüberwachung** von Kryptowährungspreisen
+- **Arbitrage-Erkennung** zwischen verschiedenen Börsen
+- **Portfolio-Analyse** mit paralleler Verarbeitung
+- **Intelligente Alerts** über Telegram
+- **Historische Datenanalyse** für bessere Entscheidungen
 
-### 🔍 Multi-Exchange Arbitrage Detection
-- **Echte Preisdaten** von Binance, Coinbase, Kraken
-- **Intelligent Filtering**: Nur Opportunities ≥ 1.5% Profit
-- **Anti-Spam**: Cooldown-basierte Alert-Kontrolle
-- **Database Storage**: Alle Arbitrage-Opportunities gespeichert
+### 🌐 Web Dashboard
+- **Live-Dashboard** mit Echtzeitdaten
+- **Interaktive Charts** für Preisverläufe
+- **Portfolio-Übersicht** mit Performance-Metriken
+- **Alert-Management** direkt im Browser
+- **API-Zugang** für externe Integrationen
 
-### 📊 Advanced Portfolio Analysis
-- **100+ Cryptocurrencies** historische Datenanalyse
-- **Sharpe Ratio, Sortino, Calmar** Berechnung
-- **Top Performer Tracking** mit Performance-Alerts
-- **2 Jahre historische Daten** für präzise Metriken
+### 🔒 Sicherheit & Compliance
+- **Umfassende Sicherheitsaudits** in CI/CD
+- **Verschlüsselte Konfiguration** über Umgebungsvariablen
+- **Keine Hardcoded Secrets** im Code
+- **Automated Security Scanning** mit jeder Code-Änderung
 
-### 🚨 Smart Alert System
-- **Telegram Integration** für sofortige Benachrichtigungen
-- **Threshold-basierte Alerts**: 
-  - Arbitrage ≥ 1.5%
-  - Sharpe Ratio Änderungen ≥ 0.5
-- **Cooldown Management**: Anti-Spam Mechanismus
-- **Prioritäts-basierte Alerts**: High/Medium/Low
+### � Monitoring & Observability
+- **Prometheus Metrics** für detailliertes Monitoring
+- **Grafana Dashboards** für Visualisierung
+- **Health Checks** und Uptime-Überwachung
+- **Strukturierte Logs** für bessere Debugging
 
-### 🌐 Real-time Web Dashboard
-- **Vue.js Frontend** mit Live-Updates
-- **Chart.js Visualisierung**
-- **Bootstrap UI** mit modernem Design
-- **Auto-Refresh** alle 30 Sekunden
+## 🚀 Quick Start
 
-## ⚙️ Konfiguration (.env)
-
-```env
-# Telegram Bot
-TELEGRAM_BOT_TOKEN=YOUR_BOT_TOKEN
-TELEGRAM_CHAT_ID=YOUR_CHAT_ID
-
-# Alert Thresholds
-ARBITRAGE_THRESHOLD=1.5              # Minimum 1.5% profit
-SHARPE_CHANGE_THRESHOLD=0.5          # Sharpe ratio change alert
-ALERT_COOLDOWN_MINUTES=10            # Anti-spam cooldown
-
-# Monitoring Intervals
-ARBITRAGE_CHECK_INTERVAL=30          # Check every 30 seconds
-PERFORMANCE_CHECK_INTERVAL=600       # Check every 10 minutes
-
-# Watchlist
-WATCHLIST_SYMBOLS=BTC/USDT,ETH/USDT,BNB/USDT,ADA/USDT,DOT/USDT
-EXCHANGES=binance,coinbase,kraken
-```
-
-## 🏃‍♂️ Quick Start
-
-### 1. Installation
+### 1. Repository klonen
 ```bash
-pip install -r requirements.txt
+git clone https://github.com/Muslix/trading-bot-v2.git
+cd trading-bot-v2
 ```
 
-### 2. Konfiguration
+### 2. Mit Docker (Empfohlen)
 ```bash
+# Umgebungsvariablen konfigurieren
 cp .env.example .env
-# Edit .env with your configuration
+# Bearbeite .env mit deinen API-Keys
+
+# Bot mit Monitoring starten
+make docker-monitoring
 ```
 
-### 3. Start 24/7 Monitoring
+### 3. Manuelle Installation
 ```bash
-python3 crypto_monitor_24_7.py
+# Dependencies installieren
+make setup
+
+# Sichere Konfiguration
+make secure-setup
+
+# Tests ausführen
+make test
+
+# Bot starten
+make run
 ```
 
-### 4. Start Web Dashboard
+## 📋 Verfügbare Commands
+
+### 🔧 Setup & Development
 ```bash
-python3 web_api.py
-# Visit: http://localhost:5000
+make setup          # Dependencies installieren
+make secure-setup    # Interaktive Konfiguration
+make test           # Alle Tests ausführen
+make run            # Bot einmal ausführen
+make dev            # Development-Modus
+make start          # 24/7 Monitoring starten
+```
+
+### 🐳 Docker Commands
+```bash
+make docker-build      # Docker Image bauen
+make docker-run        # Bot in Container starten
+make docker-monitoring # Mit Prometheus/Grafana
+make docker-logs       # Container Logs anzeigen
+make docker-stop       # Container stoppen
+```
+
+### 🔒 Sicherheit
+```bash
+make security-check   # Schnelle Sicherheitsprüfung
+make security-audit   # Umfassende Security-Analyse
+```
+
+### 🚀 Production
+```bash
+make deploy             # Production Deployment
+make production-start   # Production Services starten
+make production-status  # Status prüfen
 ```
 
 ## 🧪 Testing

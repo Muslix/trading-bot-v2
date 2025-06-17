@@ -89,6 +89,39 @@ logs: ## 📄 Show bot logs
 		echo "$(YELLOW)No log file found$(NC)"; \
 	fi
 
+##@ Docker & Containerization
+docker-build: ## 🐳 Build Docker image
+	@echo "$(BLUE)🐳 Building Docker image...$(NC)"
+	docker build -t muslix/crypto-trading-bot:latest .
+	docker tag muslix/crypto-trading-bot:latest muslix/crypto-trading-bot:v2.0
+	@echo "$(GREEN)✅ Docker image built successfully!$(NC)"
+
+docker-run: ## 🚀 Run bot in Docker container
+	@echo "$(GREEN)🚀 Starting bot in Docker container...$(NC)"
+	docker-compose up -d crypto-bot
+	@echo "$(CYAN)🔗 Web dashboard: http://localhost:5000$(NC)"
+
+docker-stop: ## ⏹️ Stop Docker containers
+	@echo "$(YELLOW)⏹️ Stopping Docker containers...$(NC)"
+	docker-compose down
+
+docker-logs: ## 📄 Show Docker container logs
+	@echo "$(CYAN)📄 Container logs:$(NC)"
+	docker-compose logs -f crypto-bot
+
+docker-monitoring: ## 📊 Start with monitoring stack
+	@echo "$(BLUE)📊 Starting with monitoring...$(NC)"
+	docker-compose --profile monitoring up -d
+	@echo "$(CYAN)🔗 Grafana: http://localhost:3000$(NC)"
+	@echo "$(CYAN)🔗 Prometheus: http://localhost:9090$(NC)"
+	@echo "$(CYAN)🔗 Bot Dashboard: http://localhost:5000$(NC)"
+
+docker-clean: ## 🧹 Clean Docker resources
+	@echo "$(YELLOW)🧹 Cleaning Docker resources...$(NC)"
+	docker-compose down -v
+	docker system prune -f
+	@echo "$(GREEN)✅ Docker cleanup completed!$(NC)"
+
 ##@ Production
 deploy: ## 🚀 Deploy to production
 	@echo "$(GREEN)🚀 Deploying to production...$(NC)"

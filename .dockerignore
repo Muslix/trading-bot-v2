@@ -1,0 +1,78 @@
+# .dockerignore for Crypto Trading Bot
+# Git files
+.git
+.gitignore
+.github/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
+
+# Test files
+tests/
+test_*.py
+*_test.py
+
+# Database files (will be mounted as volume)
+*.db
+*.sqlite3
+
+# Backup files
+*.backup
+*.bak
+
+# Documentation
+*.md
+docs/
+
+# CI/CD files
+Makefile
+Makefile.backup
+.github/
+
+# Deployment scripts
+deployment/
+scripts/
+*.sh
+
+# Temporary files
+tmp/
+temp/

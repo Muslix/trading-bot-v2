@@ -1,0 +1,26 @@
+# Prometheus configuration for Crypto Trading Bot
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+rule_files:
+  # - "first_rules.yml"
+  # - "second_rules.yml"
+
+scrape_configs:
+  # Crypto Trading Bot metrics
+  - job_name: 'crypto-trading-bot'
+    static_configs:
+      - targets: ['crypto-bot:5000']
+    metrics_path: '/api/metrics'
+    scrape_interval: 30s
+    
+  # Prometheus itself
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  # Node exporter for system metrics (if added)
+  - job_name: 'node'
+    static_configs:
+      - targets: ['node-exporter:9100']
