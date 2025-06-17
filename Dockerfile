@@ -26,7 +26,7 @@ COPY src/ ./src/
 COPY modules/ ./modules/
 COPY utils/ ./utils/
 COPY config/ ./config/
-COPY main.py .
+COPY *.py ./
 
 # Create non-root user for security
 RUN groupadd -r appuser && useradd -r -g appuser appuser
@@ -41,4 +41,4 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
 EXPOSE 5000
 
 # Default command
-CMD ["python", "main.py"]
+CMD ["python", "src/main.py"]
