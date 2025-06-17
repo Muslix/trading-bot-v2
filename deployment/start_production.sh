@@ -40,26 +40,29 @@ echo "✅ Telegram Chat ID: $TELEGRAM_CHAT_ID"
 export PYTHONPATH="$PROJECT_ROOT:$PYTHONPATH"
 
 # Check if virtual environment exists
-if [ -d "venv" ]; then
+if [ -d ".venv" ]; then
+    echo "🐍 Activating virtual environment..."
+    source .venv/bin/activate
+elif [ -d "venv" ]; then
     echo "🐍 Activating virtual environment..."
     source venv/bin/activate
 fi
 
 # Install dependencies if needed
 echo "📦 Checking dependencies..."
-python3 -c "import flask, telegram" 2>/dev/null || {
+python3 -c "import flask, flask_cors, telegram" 2>/dev/null || {
     echo "📦 Installing missing dependencies..."
-    python3 -m pip install --user flask python-telegram-bot
+    python3 -m pip install flask flask-cors python-telegram-bot
 }
 
 # Start Web API in background
 echo "🌐 Starting Web API..."
-python3 src/web_api.py &
+nohup python3 src/web_api.py > web_api.log 2>&1 &
 WEB_PID=$!
 echo "Web API PID: $WEB_PID"
 
 # Wait a moment for web API to start
-sleep 3
+sleep 5
 
 # Start main monitoring bot
 echo "🤖 Starting main monitoring bot..."

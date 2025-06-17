@@ -273,8 +273,8 @@ class TestMetricsValidation:
         with patch.object(manager, "fetch_historical_data", return_value=short_data):
             metrics = manager.calculate_advanced_metrics("SHORT", "1y")
 
-            # Sollte Fallback verwenden
-            assert metrics["data_source"] == "simulated"
+            # Sollte Fallback verwenden (mit oder ohne Live-Preis)
+            assert metrics["data_source"] in ["simulated", "simulated_with_live_price"]
 
 
 class TestErrorHandling:

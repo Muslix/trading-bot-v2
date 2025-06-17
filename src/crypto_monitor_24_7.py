@@ -45,6 +45,7 @@ class CryptoMonitor24_7:
             "arbitrage_opportunities_found": 0,
             "alerts_sent": 0,
             "uptime_hours": 0,
+            "session_start": None,
         }
 
         # Monitoring-Konfiguration (from .env)
@@ -69,6 +70,7 @@ class CryptoMonitor24_7:
         """Starte 24/7 Monitoring"""
         self.running = True
         self.start_time = datetime.now()
+        self.stats["session_start"] = self.start_time
 
         if chat_id:
             crypto_bot.set_chat_id(chat_id)
@@ -110,9 +112,12 @@ class CryptoMonitor24_7:
                 self._update_stats()
 
                 # 5. Update Database Statistics
-                db.update_bot_statistics(self.stats)
+                try:
+                    db.update_bot_statistics(self.stats)
+                except Exception as db_error:
+                    self.logger.error(f"❌ Database Stats Update Fehler: {db_error}")
 
-                # 5. Kurze Pause vor nächstem Cycle
+                # 6. Kurze Pause vor nächstem Cycle
                 cycle_time = time.time() - loop_start
                 sleep_time = max(1, self.config["arbitrage_check_interval"] - cycle_time)
 

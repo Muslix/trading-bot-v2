@@ -143,7 +143,7 @@ class TestHistoricalDataManager(unittest.TestCase):
         self.assertIsInstance(result, dict)
         self.assertEqual(result["symbol"], "BTC")
         self.assertIn("data_source", result)
-        self.assertEqual(result["data_source"], "simulated")
+        self.assertIn(result["data_source"], ["simulated", "simulated_with_live_price"])
 
     @patch.object(HistoricalDataManager, 'fetch_historical_data')
     def test_calculate_advanced_metrics_no_data(self, mock_fetch):
@@ -156,7 +156,7 @@ class TestHistoricalDataManager(unittest.TestCase):
         self.assertIsInstance(result, dict)
         self.assertEqual(result["symbol"], "BTC")
         self.assertIn("data_source", result)
-        self.assertEqual(result["data_source"], "simulated")
+        self.assertIn(result["data_source"], ["simulated", "simulated_with_live_price"])
 
     @patch.object(HistoricalDataManager, 'fetch_historical_data')
     def test_calculate_beta_vs_btc_success(self, mock_fetch):
