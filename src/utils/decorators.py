@@ -19,11 +19,11 @@ def log_performance(func):
         try:
             result = func(*args, **kwargs)
             execution_time = time.time() - start_time
-            print("✅ {function_name} - {execution_time:.2f}s")
+            print(f"✅ {function_name} - {execution_time:.2f}s")
             return result
         except Exception as e:
             execution_time = time.time() - start_time
-            print("❌ {function_name} FEHLER nach {execution_time:.2f}s: {str(e)}")
+            print(f"❌ {function_name} FEHLER nach {execution_time:.2f}s: {str(e)}")
             raise e
 
     return wrapper
@@ -40,11 +40,11 @@ def async_log_performance(func):
         try:
             result = await func(*args, **kwargs)
             execution_time = time.time() - start_time
-            print("✅ {function_name} - {execution_time:.2f}s")
+            print(f"✅ {function_name} - {execution_time:.2f}s")
             return result
         except Exception as e:
             execution_time = time.time() - start_time
-            print("❌ {function_name} FEHLER nach {execution_time:.2f}s: {str(e)}")
+            print(f"❌ {function_name} FEHLER nach {execution_time:.2f}s: {str(e)}")
             raise e
 
     return wrapper

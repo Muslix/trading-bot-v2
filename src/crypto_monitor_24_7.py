@@ -335,12 +335,12 @@ class CryptoMonitor24_7:
         self.running = False
         uptime = self._calculate_uptime_hours()
 
-        self.logger.info("🛑 Monitor gestoppt nach {uptime} Stunden")
+        self.logger.info(f"🛑 Monitor gestoppt nach {uptime} Stunden")
         self.logger.info("📊 Statistiken:")
-        self.logger.info("   • Arbitrage Checks: {self.stats['total_arbitrage_checks']}")
-        self.logger.info("   • Performance Analysen: {self.stats['total_performance_analyses']}")
-        self.logger.info("   • Arbitrage gefunden: {self.stats['arbitrage_opportunities_found']}")
-        self.logger.info("   • Alerts gesendet: {self.stats['alerts_sent']}")
+        self.logger.info(f"   • Arbitrage Checks: {self.stats['total_arbitrage_checks']}")
+        self.logger.info(f"   • Performance Analysen: {self.stats['total_performance_analyses']}")
+        self.logger.info(f"   • Arbitrage gefunden: {self.stats['arbitrage_opportunities_found']}")
+        self.logger.info(f"   • Alerts gesendet: {self.stats['alerts_sent']}")
 
         # Sende Shutdown-Nachricht
         shutdown_message = """
@@ -369,11 +369,11 @@ async def main():
     monitor = CryptoMonitor24_7()
 
     print("⚙️ Konfiguration:")
-    print("   • Arbitrage Check: alle {monitor.config['arbitrage_check_interval']}s")
-    print("   • Performance Check: alle {monitor.config['performance_check_interval']//60} Minuten")
-    print("   • Watchlist: {len(monitor.config['watchlist_symbols'])} Symbole")
-    print("   • Analysis Cryptos: {monitor.config['analysis_crypto_count']}")
-    print("   • Daily Summary: {monitor.config['daily_summary_hour']}:00 Uhr")
+    print(f"   • Arbitrage Check: alle {monitor.config['arbitrage_check_interval']}s")
+    print(f"   • Performance Check: alle {monitor.config['performance_check_interval']//60} Minuten")
+    print(f"   • Watchlist: {len(monitor.config['watchlist_symbols'])} Symbole")
+    print(f"   • Analysis Cryptos: {monitor.config['analysis_crypto_count']}")
+    print(f"   • Daily Summary: {monitor.config['daily_summary_hour']}:00 Uhr")
     print()
 
     # Chat ID eingeben (in Produktion automatisch)
@@ -396,4 +396,4 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         print("\n👋 Monitoring beendet!")
     except Exception as e:
-        print("\n❌ Kritischer Fehler: {e}")
+        print(f"\n❌ Kritischer Fehler: {e}")

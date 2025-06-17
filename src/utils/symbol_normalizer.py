@@ -212,4 +212,4 @@ if __name__ == "__main__":
     print("Symbol Normalisierung Test:")
     for symbol in test_symbols:
         normalized = normalize_crypto_symbol(symbol)
-        print("{symbol:12} -> {normalized}")
+        print(f"{symbol:12} -> {normalized}")

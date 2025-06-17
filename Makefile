@@ -184,3 +184,26 @@ all: ## 🎯 Full workflow (setup -> test -> run)
 	@$(MAKE) setup
 	@$(MAKE) test
 	@$(MAKE) run
+
+# =============================================================================
+# CODE QUALITY & TESTING
+# =============================================================================
+
+# Pre-commit checks - run before every commit
+pre-commit:
+	@echo "🔍 Running pre-commit checks..."
+	@~/.local/bin/flake8 src/ tests/ --max-line-length=120 --ignore=E203,W503,F401,E501,F541,W291,E402,E722,F841 --count
+	@python -m pytest tests/test_modules/ -x --tb=short
+	@python -m pytest tests/test_integration.py -x --tb=short
+	@echo "✅ All checks passed! Ready to commit."
+
+# Quick pre-commit (skip integration tests for speed)
+pre-commit-quick:
+	@echo "🔍 Running quick pre-commit checks..."
+	@~/.local/bin/flake8 src/ tests/ --max-line-length=120 --ignore=E203,W503,F401,E501,F541,W291,E402,E722,F841 --count
+	@python -m pytest tests/test_integration.py -x --tb=short
+	@echo "✅ Quick checks passed!"
+
+# Full test suite
+test-all:
+	@python -m pytest tests/ -v --tb=short

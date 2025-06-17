@@ -51,7 +51,7 @@ async def fetch_crypto_price(exchange_name: str, symbol: str) -> Tuple[str, floa
         return (exchange_name, round(final_price, 2), symbol)
 
     except Exception as e:
-        print("⚠️ {exchange_name} API Fehler für {symbol}: {e}")
+        print(f"⚠️ {exchange_name} API Fehler für {symbol}: {e}")
         return (exchange_name, 0.0, symbol)
 
 
@@ -64,7 +64,7 @@ async def monitor_multi_exchange_prices(
     if exchanges is None:
         exchanges = ["binance", "coinbase", "kraken"]
 
-    print("🔍 Überwache {symbol} auf {len(exchanges)} Börsen gleichzeitig...")
+    print(f"🔍 Überwache {symbol} auf {len(exchanges)} Börsen gleichzeitig...")
 
     # Alle API-Calls parallel starten
     tasks = [fetch_crypto_price(exchange, symbol) for exchange in exchanges]
@@ -93,7 +93,7 @@ async def monitor_multiple_symbols(
     if exchanges is None:
         exchanges = ["binance", "coinbase", "kraken"]
 
-    print("🔍 Überwache {len(symbols)} Symbole auf {len(exchanges)} Börsen...")
+    print(f"🔍 Überwache {len(symbols)} Symbole auf {len(exchanges)} Börsen...")
 
     # Alle Symbol-Überwachungen parallel starten
     tasks = [monitor_multi_exchange_prices(symbol, exchanges) for symbol in symbols]
@@ -114,11 +114,11 @@ async def monitor_multiple_symbols(
 def display_price_data(symbol: str, prices: Dict[str, float]):
     """Zeige Preis-Daten für ein Symbol"""
     if prices:
-        print("💰 Aktuelle Preise für {symbol}:")
+        print(f"💰 Aktuelle Preise für {symbol}:")
         for exchange, price in prices.items():
-            print("   {exchange.upper()}: ${price:,.2f}")
+            print(f"   {exchange.upper()}: ${price:,.2f}")
     else:
-        print("⚠️ Keine Preisdaten für {symbol} verfügbar")
+        print(f"⚠️ Keine Preisdaten für {symbol} verfügbar")
 
 
 def get_popular_crypto_symbols(n: int = 10) -> List[str]:

@@ -72,13 +72,13 @@ class HistoricalDataManager:
             hist = ticker.history(period=period)
 
             if hist.empty:
-                print("⚠️ Keine Daten für {symbol} verfügbar")
+                print(f"⚠️ Keine Daten für {symbol} verfügbar")
                 return None
 
             return hist
 
         except Exception as e:
-            print("❌ Fehler beim Laden von {symbol}: {e}")
+            print(f"❌ Fehler beim Laden von {symbol}: {e}")
             return None
 
     @log_performance
@@ -162,7 +162,7 @@ class HistoricalDataManager:
             }
 
         except Exception as e:
-            print("❌ Fehler bei Metriken für {symbol}: {e}")
+            print(f"❌ Fehler bei Metriken für {symbol}: {e}")
             return self._get_fallback_metrics(symbol)
 
     def _calculate_beta_vs_btc(self, returns: pd.Series) -> float:
@@ -242,7 +242,7 @@ def analyze_crypto_portfolio_enhanced(
     crypto_symbols: List[str], period: str = "2y"
 ) -> Dict[str, Dict]:
     """Erweiterte Portfolio-Analyse mit echten historischen Daten"""
-    print("🔄 Analysiere {len(crypto_symbols)} Kryptowährungen mit {period} historischen Daten...")
+    print(f"🔄 Analysiere {len(crypto_symbols)} Kryptowährungen mit {period} historischen Daten...")
     print("📊 Lade echte Marktdaten für erweiterte Risiko-Metriken...")
 
     from multiprocessing import Pool

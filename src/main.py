@@ -50,7 +50,7 @@ async def crypto_screener():
     arbitrage_history = []
 
     for symbol in crypto_symbols:
-        print("\n📊 Analysiere {symbol}...")
+        print(f"\n📊 Analysiere {symbol}...")
 
         # ECHTE Live-Preise von allen Börsen gleichzeitig abholen
         prices = await monitor_real_exchange_prices(symbol)
@@ -84,7 +84,7 @@ def crypto_portfolio_analyzer():
     # Erweiterte Krypto-Liste
     crypto_symbols = get_top_cryptocurrencies(100)  # Standard: 100 Coins
 
-    print("🔄 Analysiere {len(crypto_symbols)} Kryptowährungen...")
+    print(f"🔄 Analysiere {len(crypto_symbols)} Kryptowährungen...")
     print("📊 Verwende ECHTE historische Daten für präzise Sharpe Ratios")
     print("📈 Erweiterte Metriken: Sortino, Calmar, VaR, Beta vs BTC")
 
@@ -101,14 +101,14 @@ def crypto_portfolio_analyzer():
     print("\n📊 Multi-Timeframe Analysis für TOP 5 Coins:")
     timeframe_analysis = {}
     for i, (symbol, _) in enumerate(top_cryptos[:5]):
-        print("🔍 Analysiere {symbol} über verschiedene Zeiträume...")
+        print(f"🔍 Analysiere {symbol} über verschiedene Zeiträume...")
         timeframe_analysis[symbol] = compare_timeframes(symbol, ["1y", "2y", "3y"])
 
     display_timeframe_comparison(timeframe_analysis)
 
     print("\n⚡ Enhanced Analysis Performance:")
-    print("   100 Coins mit echten Daten: {enhanced_time:.2f}s")
-    print("   Durchschnitt pro Coin: {enhanced_time/len(crypto_symbols):.3f}s")
+    print(f"   100 Coins mit echten Daten: {enhanced_time:.2f}s")
+    print(f"   Durchschnitt pro Coin: {enhanced_time/len(crypto_symbols):.3f}s")
 
     return top_cryptos, enhanced_results, timeframe_analysis
 
@@ -121,7 +121,7 @@ def display_enhanced_portfolio_results(results: Dict[str, Dict], top_n: int = 15
     # Sortiere nach Sharpe Ratio
     sorted_cryptos = sorted(valid_results.items(), key=lambda x: x[1]["sharpe_ratio"], reverse=True)
 
-    print("\n🏆 TOP {top_n} Kryptowährungen nach Sharpe Ratio (2Y Daten):")
+    print(f"\n🏆 TOP {top_n} Kryptowährungen nach Sharpe Ratio (2Y Daten):")
     print("=" * 90)
     print(
         "{'Rank':<4} {'Symbol':<8} {'Sharpe':<8} {'Sortino':<8} {'Return%':<8} {'Vol%':<8} {'MaxDD%':<8} {'Beta':<6} {'Price':<10}"
@@ -143,9 +143,9 @@ def display_enhanced_portfolio_results(results: Dict[str, Dict], top_n: int = 15
     )
     simulated_count = len(valid_results) - real_data_count
 
-    print("   🟢 Echte Marktdaten: {real_data_count} Coins")
-    print("   🔴 Simulierte Daten: {simulated_count} Coins")
-    print("   📈 Analysierte Coins: {len(valid_results)} von {len(results)}")
+    print(f"   🟢 Echte Marktdaten: {real_data_count} Coins")
+    print(f"   🔴 Simulierte Daten: {simulated_count} Coins")
+    print(f"   📈 Analysierte Coins: {len(valid_results)} von {len(results)}")
 
     return sorted_cryptos[:top_n]
 
@@ -154,7 +154,7 @@ def display_timeframe_comparison(timeframe_analysis: Dict[str, Dict]):
     """Zeige Vergleich verschiedener Zeiträume"""
     print("\n📈 MULTI-TIMEFRAME SHARPE RATIO COMPARISON:")
     print("=" * 70)
-    print("{'Symbol':<8} {'1Y':<10} {'2Y':<10} {'3Y':<10} {'Trend':<8}")
+    print(f"{'Symbol':<8} {'1Y':<10} {'2Y':<10} {'3Y':<10} {'Trend':<8}")
     print("-" * 70)
 
     for symbol, timeframes in timeframe_analysis.items():
@@ -170,7 +170,7 @@ def display_timeframe_comparison(timeframe_analysis: Dict[str, Dict]):
         else:
             trend = "↔️ MIX"
 
-        print("{symbol:<8} {sharpe_1y:<10.3f} {sharpe_2y:<10.3f} {sharpe_3y:<10.3f} {trend:<8}")
+        print(f"{symbol:<8} {sharpe_1y:<10.3f} {sharpe_2y:<10.3f} {sharpe_3y:<10.3f} {trend:<8}")
 
     print("\n💡 Interpretation:")
     print("   📈 UP: Konstant steigende Performance über Zeit")
@@ -203,9 +203,9 @@ async def main():
         # Arbitrage-Statistiken
         total_opportunities = sum(len(opps) for opps in arbitrage_history)
         print("\n📈 Session-Statistiken:")
-        print("   Überwachte Symbole: {len(get_popular_crypto_symbols(5))}")
-        print("   Gefundene Arbitrage-Möglichkeiten: {total_opportunities}")
-        print("   Analysierte Kryptowährungen: {len(get_top_cryptocurrencies(50))}")
+        print(f"   Überwachte Symbole: {len(get_popular_crypto_symbols(5))}")
+        print(f"   Gefundene Arbitrage-Möglichkeiten: {total_opportunities}")
+        print(f"   Analysierte Kryptowährungen: {len(get_top_cryptocurrencies(50))}")
 
         if top_cryptos:
             best_crypto = top_cryptos[0]
@@ -220,7 +220,7 @@ async def main():
         print("=" * 80)
 
     except Exception as e:
-        print("❌ Fehler im Trading Bot: {e}")
+        print(f"❌ Fehler im Trading Bot: {e}")
         raise
 
 

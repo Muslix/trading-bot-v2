@@ -56,7 +56,7 @@ class TelegramCryptoBot:
     def set_chat_id(self, chat_id: str):
         """Setze die Chat ID für Nachrichten"""
         self.chat_id = chat_id
-        self.logger.info("Chat ID gesetzt: {chat_id}")
+        self.logger.info(f"Chat ID gesetzt: {chat_id}")
 
     async def get_chat_id_from_updates(self) -> Optional[str]:
         """Hole Chat ID aus aktuellen Updates (für Setup)"""
@@ -244,7 +244,7 @@ class TelegramCryptoBot:
         """Teste Bot-Verbindung"""
         try:
             bot_info = await self.bot.get_me()
-            self.logger.info("Bot verbunden: @{bot_info.username}")
+            self.logger.info(f"Bot verbunden: @{bot_info.username}")
 
             test_message = """
 🧪 *TEST NACHRICHT*
@@ -288,7 +288,7 @@ async def setup_telegram_bot() -> bool:
 
     if chat_id:
         crypto_bot.set_chat_id(chat_id)
-        print("✅ Chat ID gefunden: {chat_id}")
+        print(f"✅ Chat ID gefunden: {chat_id}")
     else:
         print("⚠️ Keine Chat ID gefunden.")
         print("💡 Schreibe eine Nachricht an @crypto_muslix_bot und führe das Setup erneut aus.")
@@ -305,7 +305,7 @@ async def setup_telegram_bot() -> bool:
     print("\n" + "=" * 50)
     print("🎉 TELEGRAM BOT SETUP ERFOLGREICH!")
     print("📱 Bot: @crypto_muslix_bot")
-    print("💬 Chat ID: {chat_id}")
+    print(f"💬 Chat ID: {chat_id}")
     print("🚀 Bot ist bereit für 24/7 Monitoring!")
 
     return True

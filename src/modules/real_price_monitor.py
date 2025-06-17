@@ -63,7 +63,7 @@ async def fetch_crypto_price_real(exchange_name: str, symbol: str) -> Tuple[str,
             return await fetch_from_coingecko(exchange_name, symbol, session)
 
     except Exception as e:
-        print("⚠️ {exchange_name} API Fehler für {symbol}: {e}")
+        print(f"⚠️ {exchange_name} API Fehler für {symbol}: {e}")
         return await fetch_crypto_price_fallback(exchange_name, symbol)
 
 
@@ -97,7 +97,7 @@ async def fetch_from_coingecko(
                     return (exchange_name, round(final_price, 2), symbol)
 
     except Exception as e:
-        print("⚠️ CoinGecko Fehler für {exchange_name} {symbol}: {e}")
+        print(f"⚠️ CoinGecko Fehler für {exchange_name} {symbol}: {e}")
 
     return await fetch_crypto_price_fallback(exchange_name, symbol)
 
@@ -165,11 +165,11 @@ async def fetch_crypto_price_fallback(exchange_name: str, symbol: str) -> Tuple[
         }
 
         base_price = fallback_prices.get(symbol, 100)
-        print("📉 Verwende Fallback-Preis für {exchange_name} {symbol}: ${base_price}")
+        print(f"📉 Verwende Fallback-Preis für {exchange_name} {symbol}: ${base_price}")
         return (exchange_name, base_price, symbol)
 
     except Exception as e:
-        print("⚠️ Fallback Fehler für {exchange_name} {symbol}: {e}")
+        print(f"⚠️ Fallback Fehler für {exchange_name} {symbol}: {e}")
         return (exchange_name, 0.0, symbol)
 
 
@@ -185,7 +185,7 @@ async def fetch_crypto_price_enhanced(exchange_name: str, symbol: str) -> Tuple[
             # Fallback zu CoinGecko
             return await fetch_crypto_price_fallback(exchange_name, symbol)
     except Exception as e:
-        print("⚠️ Enhanced Preis-Abruf Fehler für {exchange_name} {symbol}: {e}")
+        print(f"⚠️ Enhanced Preis-Abruf Fehler für {exchange_name} {symbol}: {e}")
         return await fetch_crypto_price_fallback(exchange_name, symbol)
 
 
@@ -198,7 +198,7 @@ async def monitor_real_exchange_prices(
     if exchanges is None:
         exchanges = ["binance", "coinbase", "kraken"]
 
-    print("🔍 Hole ECHTE Live-Preise für {symbol} von {len(exchanges)} Börsen...")
+    print(f"🔍 Hole ECHTE Live-Preise für {symbol} von {len(exchanges)} Börsen...")
 
     # Alle API-Calls parallel starten
     tasks = [fetch_crypto_price_enhanced(exchange, symbol) for exchange in exchanges]
@@ -219,7 +219,7 @@ async def monitor_real_exchange_prices(
             prices[exchange_name] = price
             real_data_count += 1
 
-    print("📊 {real_data_count}/{len(exchanges)} Börsen mit echten Daten")
+    print(f"📊 {real_data_count}/{len(exchanges)} Börsen mit echten Daten")
     return prices
 
 
@@ -255,6 +255,6 @@ async def get_current_market_prices(symbols: List[str]) -> Dict[str, float]:
                     return prices
 
     except Exception as e:
-        print("⚠️ Fehler beim Abruf der Marktpreise: {e}")
+        print(f"⚠️ Fehler beim Abruf der Marktpreise: {e}")
 
     return {}

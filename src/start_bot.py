@@ -8,6 +8,7 @@ import asyncio
 import os
 import signal
 import sys
+from datetime import datetime
 from pathlib import Path
 
 # Add project root to path
@@ -39,7 +40,7 @@ class PersistentBotLauncher:
 
     def _signal_handler(self, signum, frame):
         """Handle shutdown signals"""
-        print("\n🛑 Shutdown signal received ({signum})")
+        print(f"\n🛑 Shutdown signal received ({signum})")
         self.shutdown_requested = True
         self.running = False
 
@@ -65,7 +66,7 @@ class PersistentBotLauncher:
             try:
                 chat_id = await crypto_bot.get_chat_id_from_updates()
                 if chat_id:
-                    print("✅ Found Chat ID: {chat_id}")
+                    print(f"✅ Found Chat ID: {chat_id}")
 
                     # Update .env file
                     self._update_env_file("TELEGRAM_CHAT_ID", chat_id)
@@ -87,9 +88,9 @@ class PersistentBotLauncher:
                     return True
 
             except Exception as e:
-                print("⚠️ Error checking for Chat ID: {e}")
+                print(f"⚠️ Error checking for Chat ID: {e}")
 
-            print("⏳ Waiting... ({attempt + 1}/6)")
+            print(f"⏳ Waiting... ({attempt + 1}/6)")
             await asyncio.sleep(5)
 
         print("❌ No Chat ID found. Please message @crypto_muslix_bot first.")
@@ -130,10 +131,10 @@ class PersistentBotLauncher:
             with open(env_file, "w", encoding="utf-8") as f:
                 f.writelines(lines)
 
-            print("✅ Updated .env file: {key}={value}")
+            print(f"✅ Updated .env file: {key}={value}")
 
         except Exception as e:
-            print("❌ Error updating .env file: {e}")
+            print(f"❌ Error updating .env file: {e}")
 
     async def start_monitoring(self):
         """Starte das 24/7 Monitoring"""
@@ -147,10 +148,10 @@ class PersistentBotLauncher:
         self.config.print_config_summary()
 
         print("\n📊 Monitor Configuration:")
-        print("   • Arbitrage checks: every {self.config.arbitrage_check_interval}s")
-        print("   • Performance analysis: every {self.config.performance_check_interval//60}min")
-        print("   • Watchlist: {self.config.watchlist_symbols}")
-        print("   • Exchanges: {self.config.exchanges}")
+        print(f"   • Arbitrage checks: every {self.config.arbitrage_check_interval}s")
+        print(f"   • Performance analysis: every {self.config.performance_check_interval//60}min")
+        print(f"   • Watchlist: {self.config.watchlist_symbols}")
+        print(f"   • Exchanges: {self.config.exchanges}")
 
         print("\n🔄 Starting monitoring loop...")
         print("📱 Press Ctrl+C to stop gracefully")
@@ -163,7 +164,7 @@ class PersistentBotLauncher:
         except KeyboardInterrupt:
             print("\n⏹️ Monitoring stopped by user")
         except Exception as e:
-            print("\n❌ Monitoring error: {e}")
+            print(f"\n❌ Monitoring error: {e}")
             import traceback
 
             traceback.print_exc()
@@ -174,7 +175,7 @@ class PersistentBotLauncher:
         """Haupt-Einstiegspunkt"""
         print("🤖 CRYPTO TRADING BOT 24/7 - PERSISTENT LAUNCHER")
         print("=" * 60)
-        print("⏰ Start time: {datetime.now().strftime('%d.%m.%Y %H:%M:%S')}")
+        print(f"⏰ Start time: {datetime.now().strftime('%d.%m.%Y %H:%M:%S')}")
 
         # 1. Setup Telegram
         if not await self.setup_telegram_chat_id():
@@ -184,7 +185,7 @@ class PersistentBotLauncher:
         # 2. Start monitoring
         await self.start_monitoring()
 
-        print("\n⏰ Session ended: {datetime.now().strftime('%d.%m.%Y %H:%M:%S')}")
+        print(f"\n⏰ Session ended: {datetime.now().strftime('%d.%m.%Y %H:%M:%S')}")
         return True
 
 
@@ -196,7 +197,7 @@ def main():
     except KeyboardInterrupt:
         print("\n👋 Bot launcher stopped")
     except Exception as e:
-        print("\n💥 Launcher error: {e}")
+        print(f"\n💥 Launcher error: {e}")
         import traceback
 
         traceback.print_exc()

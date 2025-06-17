@@ -30,7 +30,7 @@ class CryptoDatabaseManager:
     def _ensure_db_exists(self):
         """Stelle sicher dass Database-Datei existiert"""
         if not os.path.exists(self.db_path):
-            self.logger.info("📊 Erstelle neue SQLite Datenbank: {self.db_path}")
+            self.logger.info(f"📊 Erstelle neue SQLite Datenbank: {self.db_path}")
 
     @contextmanager
     def get_connection(self):
@@ -383,7 +383,7 @@ class CryptoDatabaseManager:
                 saved_count += 1
 
             conn.commit()
-            self.logger.info("💾 Performance-Daten gespeichert: {saved_count} Einträge")
+            self.logger.info(f"💾 Performance-Daten gespeichert: {saved_count} Einträge")
             return saved_count
 
     def get_latest_performance_data(self, limit: int = 20) -> List[Dict]:
@@ -446,7 +446,7 @@ class CryptoDatabaseManager:
 
             conn.commit()
             snapshot_id = cursor.lastrowid
-            self.logger.info("💾 Portfolio-Snapshot gespeichert: {snapshot_id}")
+            self.logger.info(f"💾 Portfolio-Snapshot gespeichert: {snapshot_id}")
             return snapshot_id
 
     # BOT STATISTICS METHODS
@@ -576,7 +576,7 @@ class CryptoDatabaseManager:
                 )
 
             conn.commit()
-            self.logger.info("🧹 Alte Daten bereinigt (älter als {days} Tage)")
+            self.logger.info(f"🧹 Alte Daten bereinigt (älter als {days} Tage)")
 
 
 # Global Database Instance
@@ -601,7 +601,7 @@ def test_database():
     }
 
     alert_id = db.save_arbitrage_alert(test_opportunity)
-    print("✅ Alert gespeichert mit ID: {alert_id}")
+    print(f"✅ Alert gespeichert mit ID: {alert_id}")
 
     # Test 2: Price Data speichern
     print("\n2. Teste Price Data...")
@@ -622,16 +622,16 @@ def test_database():
         }
     }
     saved_count = db.save_performance_data(test_performance)
-    print("✅ Performance Data gespeichert: {saved_count} Einträge")
+    print(f"✅ Performance Data gespeichert: {saved_count} Einträge")
 
     # Test 4: Dashboard Data
     print("\n4. Teste Dashboard Data...")
     dashboard_data = db.get_dashboard_data()
-    print("✅ Dashboard Data: {dashboard_data}")
+    print(f"✅ Dashboard Data: {dashboard_data}")
 
     print("\n" + "=" * 40)
     print("🎉 SQLite Database Tests erfolgreich!")
-    print("📊 Database-Datei: {db.db_path}")
+    print(f"📊 Database-Datei: {db.db_path}")
 
 
 if __name__ == "__main__":

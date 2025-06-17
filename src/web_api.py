@@ -367,11 +367,11 @@ def test_api():
     ]
 
     for endpoint in endpoints:
-        print("   {endpoint}")
+        print(f"   {endpoint}")
 
     print("\n🚀 Server bereit!")
-    print("   Frontend URL: http://{config.web_host}:{config.web_port}")
-    print("   API Base URL: http://{config.web_host}:{config.web_port}/api/")
+    print(f"   Frontend URL: http://{config.web_host}:{config.web_port}")
+    print(f"   API Base URL: http://{config.web_host}:{config.web_port}/api/")
     print("\n" + "=" * 40)
 
 

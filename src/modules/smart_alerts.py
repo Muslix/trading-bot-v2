@@ -306,7 +306,7 @@ class SmartAlertManager:
 
                 if await crypto_bot.send_message(message):
                     alerts_sent += 1
-                    self.logger.info("🌟 New Top Performer Alert gesendet: {symbol}")
+                    self.logger.info(f"🌟 New Top Performer Alert gesendet: {symbol}")
 
         return alerts_sent
 
@@ -518,8 +518,8 @@ async def test_smart_alerts():
     # Test 1: Alert Rules
     print("1. Alert-Regeln:")
     stats = smart_alerts.get_alert_stats()
-    print("   • Konfigurierte Regeln: {stats['rules_configured']}")
-    print("   • Aktivierte Regeln: {stats['rules_enabled']}")
+    print(f"   • Konfigurierte Regeln: {stats['rules_configured']}")
+    print(f"   • Aktivierte Regeln: {stats['rules_enabled']}")
 
     # Test 2: Arbitrage Alert
     print("\n2. Teste Arbitrage Alert...")
@@ -536,7 +536,7 @@ async def test_smart_alerts():
     ]
 
     result = await smart_alerts.check_arbitrage_alerts(test_arbitrage)
-    print("   ✅ Arbitrage Alerts: {result}")
+    print(f"   ✅ Arbitrage Alerts: {result}")
 
     # Test 3: Performance Alert
     print("\n3. Teste Performance Alert...")
@@ -546,12 +546,12 @@ async def test_smart_alerts():
     ]
 
     result = await smart_alerts.check_performance_change_alerts(test_performance)
-    print("   ✅ Performance Alerts: {result}")
+    print(f"   ✅ Performance Alerts: {result}")
 
     # Test 4: Daily Summary (Force)
     print("\n4. Teste Daily Summary...")
     result = await smart_alerts.check_daily_summary_alert(force=True)
-    print("   ✅ Daily Summary: {'Gesendet' if result else 'Nicht gesendet'}")
+    print(f"   ✅ Daily Summary: {'Gesendet' if result else 'Nicht gesendet'}")
 
     print("\n" + "=" * 50)
     print("🎉 Smart Alerts Tests abgeschlossen!")
