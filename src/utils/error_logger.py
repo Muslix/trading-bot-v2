@@ -24,17 +24,27 @@ def setup_error_logger(log_level: str = "INFO") -> logging.Logger:
     console_handler = logging.StreamHandler()
     console_handler.setLevel(logging.INFO)
     
-    # File handler for errors
-    file_handler = logging.FileHandler("logs/error.log", mode='a')
-    file_handler.setLevel(logging.ERROR)
+    # File handler for errors (create directory if needed)
+    try:
+        import os
+        log_dir = "logs"
+        if not os.path.exists(log_dir):
+            os.makedirs(log_dir, exist_ok=True)
+        file_handler = logging.FileHandler("logs/error.log", mode='a')
+        file_handler.setLevel(logging.ERROR)
+        
+        # Structured formatter
+        formatter = StructuredFormatter()
+        file_handler.setFormatter(formatter)
+        logger.addHandler(file_handler)
+    except (OSError, PermissionError) as e:
+        # If we can't create log file (e.g., in CI), just use console logging
+        print(f"Warning: Could not create log file: {e}")
     
-    # Structured formatter
+    # Always add console handler
     formatter = StructuredFormatter()
     console_handler.setFormatter(formatter)
-    file_handler.setFormatter(formatter)
-    
     logger.addHandler(console_handler)
-    logger.addHandler(file_handler)
     
     return logger
 
