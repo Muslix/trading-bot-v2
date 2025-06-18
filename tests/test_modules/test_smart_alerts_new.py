@@ -14,6 +14,9 @@ from unittest.mock import AsyncMock, MagicMock, patch
 project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.append(project_root)
 
+# Import the SmartAlertManager
+from src.modules.smart_alerts import SmartAlertManager
+
 
 def create_mock_config():
     mock_config_obj = MagicMock()
@@ -39,7 +42,7 @@ sys.modules['src.modules.telegram_bot'] = mock_telegram_module
 
 # Now safe to import with mocked dependencies
 with patch('config.config.get_config', return_value=create_mock_config()):
-    from src.modules.smart_alerts import SmartAlertManager
+    from src.alerts import create_alert_manager, AlertManager
 
 
 class TestSmartAlertManager(unittest.TestCase):

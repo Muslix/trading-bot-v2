@@ -20,7 +20,7 @@ async def fetch_crypto_price_real(exchange_name: str, symbol: str) -> Tuple[str,
             if exchange_name.lower() == "binance":
                 # Binance API
                 binance_symbol = symbol.replace("/", "")
-                url = "https://api.binance.com/api/v3/ticker/price?symbol={binance_symbol}"
+                url = f"https://api.binance.com/api/v3/ticker/price?symbol={binance_symbol}"
                 async with session.get(url) as response:
                     if response.status == 200:
                         data = await response.json()
@@ -30,7 +30,7 @@ async def fetch_crypto_price_real(exchange_name: str, symbol: str) -> Tuple[str,
             elif exchange_name.lower() == "coinbase":
                 # Coinbase Advanced Trade API
                 cb_symbol = symbol.replace("/", "-")
-                url = "https://api.exchange.coinbase.com/products/{cb_symbol}/ticker"
+                url = f"https://api.exchange.coinbase.com/products/{cb_symbol}/ticker"
                 async with session.get(url) as response:
                     if response.status == 200:
                         data = await response.json()
@@ -48,7 +48,7 @@ async def fetch_crypto_price_real(exchange_name: str, symbol: str) -> Tuple[str,
                 elif kraken_symbol.endswith("USDT"):
                     kraken_symbol = kraken_symbol.replace("USDT", "USD")
 
-                url = "https://api.kraken.com/0/public/Ticker?pair={kraken_symbol}"
+                url = f"https://api.kraken.com/0/public/Ticker?pair={kraken_symbol}"
                 async with session.get(url) as response:
                     if response.status == 200:
                         data = await response.json()
@@ -75,7 +75,7 @@ async def fetch_from_coingecko(
         vs_currency = symbol.split("/")[1].lower()
 
         coin_id = get_coingecko_id(cg_symbol)
-        url = "https://api.coingecko.com/api/v3/simple/price?ids={coin_id}&vs_currencies={vs_currency}"
+        url = f"https://api.coingecko.com/api/v3/simple/price?ids={coin_id}&vs_currencies={vs_currency}"
 
         async with session.get(url) as response:
             if response.status == 200:
@@ -140,7 +140,7 @@ async def fetch_crypto_price_fallback(exchange_name: str, symbol: str) -> Tuple[
             vs_currency = symbol.split("/")[1].lower()
             coin_id = get_coingecko_id(cg_symbol)
 
-            url = "https://api.coingecko.com/api/v3/simple/price?ids={coin_id}&vs_currencies={vs_currency}"
+            url = f"https://api.coingecko.com/api/v3/simple/price?ids={coin_id}&vs_currencies={vs_currency}"
 
             async with session.get(url) as response:
                 if response.status == 200:
@@ -237,7 +237,7 @@ async def get_current_market_prices(symbols: List[str]) -> Dict[str, float]:
         timeout = aiohttp.ClientTimeout(total=15)
         async with aiohttp.ClientSession(timeout=timeout) as session:
             ids_str = ",".join(coin_ids)
-            url = "https://api.coingecko.com/api/v3/simple/price?ids={ids_str}&vs_currencies=usd"
+            url = f"https://api.coingecko.com/api/v3/simple/price?ids={ids_str}&vs_currencies=usd"
 
             async with session.get(url) as response:
                 if response.status == 200:

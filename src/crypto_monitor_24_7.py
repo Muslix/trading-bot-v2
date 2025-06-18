@@ -23,7 +23,7 @@ try:
     from src.modules.historical_data import analyze_crypto_portfolio_enhanced
     from src.modules.portfolio_analyzer import get_top_cryptocurrencies
     from src.modules.real_price_monitor import monitor_real_exchange_prices
-    from src.modules.smart_alerts import smart_alerts
+    from src.alerts import create_alert_manager, AlertManager
     from src.modules.telegram_bot import crypto_bot
     from src.utils.decorators import async_log_performance
 except ImportError as e:
@@ -37,6 +37,8 @@ class CryptoMonitor24_7:
     """24/7 Crypto Trading Bot mit intelligentem Monitoring"""
 
     def __init__(self):
+        # Initialize new alert system
+        self.alert_manager = create_alert_manager()
         self.running = False
         self.start_time = None
         self.stats = {
@@ -174,7 +176,7 @@ class CryptoMonitor24_7:
 
             # Nutze Smart Alert System für intelligente Alerts
             if arbitrage_opportunities:
-                alert_results = await smart_alerts.process_all_alerts(arbitrage_opportunities=arbitrage_opportunities)
+                alert_results = await alert_manager.process_alerts(arbitrage_opportunities=arbitrage_opportunities)
                 self.stats["alerts_sent"] += alert_results["arbitrage_alerts"]
 
             self.stats["total_arbitrage_checks"] += 1
@@ -231,7 +233,7 @@ class CryptoMonitor24_7:
                 snapshot_id = db.save_portfolio_snapshot(current_top_5, "performance_check")
 
                 # Nutze Smart Alert System für Performance-Alerts
-                alert_results = await smart_alerts.process_all_alerts(performance_data=current_top_5)
+                alert_results = await alert_manager.process_alerts(performance_data=current_top_5)
                 self.stats["alerts_sent"] += alert_results["performance_alerts"] + alert_results["new_performer_alerts"]
 
                 # Speichere für nächsten Vergleich
@@ -292,7 +294,7 @@ class CryptoMonitor24_7:
                         market_data["best_performer"] = best_performer
 
                 # Nutze Smart Alert System für Daily Summary
-                alert_results = await smart_alerts.process_all_alerts(force_daily_summary=True)
+                alert_results = await alert_manager.process_alerts(force_daily_summary=True)
                 self.stats["alerts_sent"] += alert_results["daily_summary_sent"]
 
                 self.last_daily_summary = now

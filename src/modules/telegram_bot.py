@@ -86,6 +86,14 @@ class TelegramCryptoBot:
             self.logger.error(f"Fehler beim Senden der Telegram Nachricht: {e}")
             return False
 
+    @async_log_performance
+    async def send_alert(self, message: str, alert_type: str = "general") -> bool:
+        """
+        General alert method for compatibility with new alert system.
+        This provides a unified interface for sending any type of alert.
+        """
+        return await self.send_message(message)
+
     def _should_send_alert(self, alert_type: str, key: str = "") -> bool:
         """Prüfe ob Alert gesendet werden soll (Spam-Protection)"""
         alert_key = f"{alert_type}_{key}"

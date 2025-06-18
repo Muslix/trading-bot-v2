@@ -8,14 +8,14 @@ from .portfolio_analyzer import (
     display_portfolio_results,
     get_top_cryptocurrencies,
 )
-from .price_monitor import get_popular_crypto_symbols, monitor_multi_exchange_prices
+# price_monitor functions now in real_price_monitor
+from .real_price_monitor import monitor_real_exchange_prices
 
 __all__ = [
     "analyze_crypto_portfolio_parallel",
     "get_top_cryptocurrencies",
     "display_portfolio_results",
-    "monitor_multi_exchange_prices",
-    "get_popular_crypto_symbols",
+    "monitor_real_exchange_prices",
     "detect_arbitrage_opportunities",
     "alert_system",
 ]

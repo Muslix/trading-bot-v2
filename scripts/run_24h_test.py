@@ -14,7 +14,7 @@ import os
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 from crypto_monitor_24_7 import CryptoMonitor24_7
-from src.modules.smart_alerts import smart_alerts
+from src.alerts import create_alert_manager, AlertManager
 from src.modules.database import db
 from src.modules.telegram_bot import crypto_bot
 from web_api import app
@@ -25,6 +25,8 @@ class ComprehensiveTestSuite:
     """Komplette Test-Suite für 24h Durchlauf"""
     
     def __init__(self):
+        # Initialize new alert system
+        self.alert_manager = create_alert_manager()
         self.test_start_time = datetime.now()
         self.test_results = {
             'start_time': self.test_start_time.isoformat(),
@@ -157,7 +159,7 @@ class ComprehensiveTestSuite:
         alert_start = time.time()
         
         # Teste alle Alert-Arten
-        alert_results = await smart_alerts.process_all_alerts(
+        alert_results = await alert_manager.process_alerts(
             arbitrage_opportunities=test_arbitrage,
             performance_data=test_performance,
             force_daily_summary=False  # Nicht im Test
@@ -272,7 +274,7 @@ class ComprehensiveTestSuite:
                     'sell_exchange': 'coinbase'
                 }]
                 
-                alert_results = await smart_alerts.process_all_alerts(
+                alert_results = await alert_manager.process_alerts(
                     arbitrage_opportunities=test_arbitrage
                 )
                 total_alerts_sent += alert_results['total_alerts']

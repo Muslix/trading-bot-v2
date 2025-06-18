@@ -15,6 +15,18 @@ production_config.json
 
 # Chat IDs and personal data
 chat_id.txt
+*.md
+!README.md
+!CHANGELOG.md
+ALERT_REFACTORING_SUCCESS.md
+MIGRATION_REPORT.md
+REFACTORING_PLAN.md
+REFACTORING_SUCCESS_REPORT.md
+
+# Exchange API credentials and trading data
+api_credentials.json
+trading_history.json
+portfolio_data.json
 
 # =============================================================================
 # DATABASE FILES
@@ -117,7 +129,38 @@ yarn-error.log*
 pid.lock
 *.pid
 
+# Migration and temporary scripts
+migrate_to_new_alerts.py
+migrate_to_new_data_sources.py
+migration_example.py
+test_alert_system.py
+test_data_sources_integration.py
+test_full_system_integration.py
+test_quick_integration.py
+test_universal_pattern.py
+
 # SSL certificates (if used)
 *.pem
 *.key
 *.crt
+
+# =============================================================================
+# TRADING BOT SPECIFIC
+# =============================================================================
+# Jupyter notebooks with potentially sensitive analysis
+*.ipynb_checkpoints/
+*.ipynb
+
+# Trading bot state files
+bot_state.json
+trading_session_*.json
+
+# Historical price data cache
+price_cache/
+historical_data/
+*.csv
+
+# Performance reports with real trading data
+performance_report_*.json
+arbitrage_report_*.json
+daily_summary_*.json
