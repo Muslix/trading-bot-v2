@@ -19,11 +19,11 @@ sys.path.append(project_root)
 try:
     from config.config import get_config
     from src.modules.arbitrage_detector import detect_arbitrage_opportunities
-    from src.modules.database import db
-    from src.modules.historical_data import analyze_crypto_portfolio_enhanced
+    from src.database import get_database_manager
+    from src.adapters import analyze_crypto_portfolio_enhanced
     from src.modules.portfolio_analyzer import get_top_cryptocurrencies
     from src.modules.real_price_monitor import monitor_real_exchange_prices
-    from src.alerts import create_alert_manager, AlertManager
+    from src.alerts import create_alert_manager
     from src.modules.telegram_bot import crypto_bot
     from src.utils.decorators import async_log_performance
 except ImportError as e:
@@ -37,8 +37,9 @@ class CryptoMonitor24_7:
     """24/7 Crypto Trading Bot mit intelligentem Monitoring"""
 
     def __init__(self):
-        # Initialize new alert system
-        self.alert_manager = create_alert_manager()
+        # Alert manager and database manager will be initialized in start_monitoring() method
+        self.alert_manager = None
+        self.db_manager = None
         self.running = False
         self.start_time = None
         self.stats = {
@@ -73,6 +74,13 @@ class CryptoMonitor24_7:
         self.running = True
         self.start_time = datetime.now()
         self.stats["session_start"] = self.start_time
+
+        # Initialize alert manager and database manager asynchronously
+        if self.alert_manager is None:
+            self.alert_manager = await create_alert_manager()
+        
+        if self.db_manager is None:
+            self.db_manager = await get_database_manager()
 
         if chat_id:
             crypto_bot.set_chat_id(chat_id)
@@ -115,7 +123,7 @@ class CryptoMonitor24_7:
 
                 # 5. Update Database Statistics
                 try:
-                    db.update_bot_statistics(self.stats)
+                    await self.db_manager.execute('save', repository='bot_statistics', data=self.stats)
                 except Exception as db_error:
                     self.logger.error(f"❌ Database Stats Update Fehler: {db_error}")
 
@@ -145,7 +153,13 @@ class CryptoMonitor24_7:
 
                 # Speichere Preis-Daten in Database
                 for exchange, price in prices.items():
-                    db.save_price_data(symbol, exchange, price)
+                    price_data = {
+                        'symbol': symbol,
+                        'exchange': exchange,
+                        'price': price,
+                        'timestamp': datetime.now().isoformat()
+                    }
+                    await self.db_manager.execute('save', repository='price', data=price_data)
 
                 if prices and len(prices) >= 2:
                     # Erkenne Arbitrage-Möglichkeiten - höhere Threshold für weniger Spam
@@ -160,9 +174,12 @@ class CryptoMonitor24_7:
                             for opp in profitable_opps:
                                 opp["symbol"] = symbol
                                 # Speichere nur neue Arbitrage-Möglichkeiten (keine Duplikate)
-                                alert_id = db.save_arbitrage_alert(opp)
-                                if alert_id > 0:  # Positive ID = erfolgreich gespeichert
+                                try:
+                                    await self.db_manager.execute('save', repository='arbitrage', data=opp)
                                     saved_count += 1
+                                except Exception as e:
+                                    # Duplicate or error - skip
+                                    pass
 
                             arbitrage_opportunities.extend(profitable_opps)
                             self.stats["arbitrage_opportunities_found"] += saved_count
@@ -176,8 +193,8 @@ class CryptoMonitor24_7:
 
             # Nutze Smart Alert System für intelligente Alerts
             if arbitrage_opportunities:
-                alert_results = await alert_manager.process_alerts(arbitrage_opportunities=arbitrage_opportunities)
-                self.stats["alerts_sent"] += alert_results["arbitrage_alerts"]
+                alert_results = await self.alert_manager.process_all_alerts(arbitrage_opportunities=arbitrage_opportunities)
+                self.stats["alerts_sent"] += alert_results.get("alerts_sent", 0)
 
             self.stats["total_arbitrage_checks"] += 1
             self.logger.info(f"✅ Arbitrage-Check abgeschlossen - {len(arbitrage_opportunities)} Möglichkeiten gefunden")
@@ -215,7 +232,7 @@ class CryptoMonitor24_7:
             )
 
             # Analysiere mit historischen Daten
-            results = analyze_crypto_portfolio_enhanced(current_symbols, period="1y")
+            results = await analyze_crypto_portfolio_enhanced(current_symbols, period="1y")
 
             # Nächsten Batch für nächsten Cycle vorbereiten
             self._current_batch = (current_batch + 1) % total_batches
@@ -226,15 +243,26 @@ class CryptoMonitor24_7:
                 sorted_cryptos = sorted(valid_results.items(), key=lambda x: x[1]["sharpe_ratio"], reverse=True)
 
                 # Speichere Performance-Daten in Database
-                saved_count = db.save_performance_data(results)
+                try:
+                    await self.db_manager.execute('save', repository='performance', data=results)
+                except Exception as e:
+                    self.logger.error(f"❌ Performance data save error: {e}")
 
                 # Speichere Portfolio-Snapshot
                 current_top_5 = sorted_cryptos[:5]
-                snapshot_id = db.save_portfolio_snapshot(current_top_5, "performance_check")
+                try:
+                    snapshot_data = {
+                        'performers': current_top_5,
+                        'snapshot_type': 'performance_check',
+                        'timestamp': datetime.now().isoformat()
+                    }
+                    await self.db_manager.execute('save', repository='portfolio', data=snapshot_data)
+                except Exception as e:
+                    self.logger.error(f"❌ Portfolio snapshot save error: {e}")
 
                 # Nutze Smart Alert System für Performance-Alerts
-                alert_results = await alert_manager.process_alerts(performance_data=current_top_5)
-                self.stats["alerts_sent"] += alert_results["performance_alerts"] + alert_results["new_performer_alerts"]
+                alert_results = await self.alert_manager.process_all_alerts(current_performers=current_top_5)
+                self.stats["alerts_sent"] += alert_results.get("alerts_sent", 0)
 
                 # Speichere für nächsten Vergleich
                 self.performance_history[now] = current_top_5
@@ -294,8 +322,8 @@ class CryptoMonitor24_7:
                         market_data["best_performer"] = best_performer
 
                 # Nutze Smart Alert System für Daily Summary
-                alert_results = await alert_manager.process_alerts(force_daily_summary=True)
-                self.stats["alerts_sent"] += alert_results["daily_summary_sent"]
+                alert_results = await self.alert_manager.process_all_alerts(force_summary=True)
+                self.stats["alerts_sent"] += alert_results.get("alerts_sent", 0)
 
                 self.last_daily_summary = now
                 self.logger.info("✅ Täglicher Summary gesendet")

@@ -81,8 +81,8 @@ class PerformanceAlert(AlertPlugin):
             
             # Check for new top performers (Sharpe > 1.5 and not seen before)
             min_sharpe_for_top = self.config.custom_settings.get('min_sharpe_for_top', 1.5)
-            if (current_sharpe >= min_sharpe_for_top and 
-                symbol not in self.previous_performers):
+            if (current_sharpe >= min_sharpe_for_top
+                    and symbol not in self.previous_performers):
                 new_top_performers.append({
                     'symbol': symbol,
                     'sharpe': current_sharpe

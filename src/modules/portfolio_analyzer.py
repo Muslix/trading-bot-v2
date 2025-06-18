@@ -165,11 +165,11 @@ async def analyze_crypto_portfolio_parallel(crypto_symbols: List[str]) -> Dict[s
 
 
 @log_performance
-def analyze_crypto_portfolio_sequential(crypto_symbols: List[str]) -> Dict[str, Dict]:
+async def analyze_crypto_portfolio_sequential(crypto_symbols: List[str]) -> Dict[str, Dict]:
     """Sequentielle Analyse für Performance-Vergleich"""
     results = {}
     for symbol in crypto_symbols:
-        result = calculate_crypto_metrics(symbol)
+        result = await calculate_crypto_metrics(symbol)
         results[result[0]] = result[1]
     return results
 

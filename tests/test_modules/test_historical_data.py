@@ -32,8 +32,16 @@ class TestHistoricalDataManager:
         assert "BTC" in manager.crypto_symbol_mapping
         assert manager.crypto_symbol_mapping["BTC"] == "BTC-USD"
 
-    def test_fetch_historical_data_success(self):
-        """Test erfolgreiche Datenabfrage"""
+    @patch('yfinance.Ticker')
+    def test_fetch_historical_data_success(self, mock_ticker):
+        """Test erfolgreiche Datenabfrage mit Mock"""
+        # Mock successful data
+        mock_hist = pd.DataFrame({
+            'Close': [100, 101, 102],
+            'Volume': [1000, 1100, 1200]
+        })
+        mock_ticker.return_value.history.return_value = mock_hist
+        
         manager = HistoricalDataManager()
         result = manager.fetch_historical_data("BTC", "1y")
 
@@ -47,18 +55,20 @@ class TestHistoricalDataManager:
         manager = HistoricalDataManager()
         result = manager.fetch_historical_data("INVALID_SYMBOL_THAT_DOESNT_EXIST", "1y")
 
-        # In our mock system, it should still return data even for invalid symbols
-        assert result is not None
-        assert isinstance(result, pd.DataFrame)
+        # For invalid symbols, the real system should return None
+        assert result is None
 
-    def test_fetch_historical_data_error(self):
+    @patch('yfinance.Ticker')
+    def test_fetch_historical_data_error(self, mock_ticker):
         """Test Fehlerbehandlung bei Datenabfrage"""
+        # Mock empty data (error case)
+        mock_ticker.return_value.history.return_value = pd.DataFrame()
+        
         manager = HistoricalDataManager()
-        # Our mock implementation doesn't fail, so this test just verifies it works
         result = manager.fetch_historical_data("BTC", "1y")
 
-        assert result is not None
-        assert isinstance(result, pd.DataFrame)
+        # When data is empty, should return None
+        assert result is None
 
 
 class TestAdvancedMetrics:
@@ -177,8 +187,19 @@ class TestEnhancedFunctions:
         results = await analyze_crypto_portfolio_enhanced(symbols)
 
         assert isinstance(results, dict)
-        assert "portfolio_analysis" in results
-        assert "total_portfolio_value" in results
+        # New format returns data per symbol directly
+        assert "BTC" in results
+        assert "ETH" in results
+        
+        # Each symbol should have expected fields
+        for symbol in symbols:
+            symbol_data = results[symbol]
+            assert isinstance(symbol_data, dict)
+            if "error" not in symbol_data:
+                assert "current_price" in symbol_data
+                assert "sharpe_ratio" in symbol_data
+            # Even on error, should have timestamp
+            assert "timestamp" in symbol_data
 
     def test_compare_timeframes(self):
         """Test Zeitraum-Vergleich"""

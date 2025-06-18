@@ -276,9 +276,8 @@ class TestDatabaseManager:
         
         # Delete
         success = await manager._execute('delete',
-            repository='price',
-            record_id=record_id
-        )
+                                         repository='price',
+                                         record_id=record_id)
         assert success is True
         
         # Verify deletion

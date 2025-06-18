@@ -83,7 +83,7 @@ class MockDataSourcePlugin(DataSourcePlugin):
             'High': [105 + i for i in range(10)],
             'Low': [95 + i for i in range(10)],
             'Close': [102 + i for i in range(10)],
-            'Volume': [1000000 + i*10000 for i in range(10)]
+            'Volume': [1000000 + i * 10000 for i in range(10)]
         }
         return pd.DataFrame(data, index=dates)
     

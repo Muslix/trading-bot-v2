@@ -102,7 +102,7 @@ class TestPriceRepository(TestRepositories):
         """Test getting price history within time range"""
         # Save historical data
         for i, price in enumerate([40000, 41000, 42000]):
-            timestamp = (datetime.now() - timedelta(hours=i+1)).isoformat()
+            timestamp = (datetime.now() - timedelta(hours=i + 1)).isoformat()
             await price_repo.save({
                 'symbol': 'BTC',
                 'exchange': 'binance',
