@@ -18,7 +18,30 @@ from .exceptions import ManagerError, PluginNotFoundError, PluginExecutionError
 logger = logging.getLogger(__name__)
 
 
-class UniversalManager:
+class BaseManager:
+    """Base class for all plugin managers"""
+    
+    def __init__(self):
+        self.logger = logging.getLogger(self.__class__.__name__)
+        self.is_initialized = False
+        
+    async def initialize(self, config: Dict[str, Any] = None):
+        """Initialize the manager"""
+        self.is_initialized = True
+        
+    async def cleanup(self):
+        """Cleanup manager resources"""
+        self.is_initialized = False
+        
+    async def health_check(self) -> Dict[str, Any]:
+        """Basic health check"""
+        return {
+            "status": "healthy" if self.is_initialized else "not_initialized",
+            "initialized": self.is_initialized
+        }
+
+
+class UniversalManager(BaseManager):
     """
     Universal manager for orchestrating plugins across all modules.
     
@@ -31,10 +54,10 @@ class UniversalManager:
     """
     
     def __init__(self, module_name: str, auto_discover_path: str = None):
+        super().__init__()
         self.module_name = module_name
         self.plugins: Dict[str, UniversalPlugin] = {}
         self.factory = UniversalFactory(module_name)
-        self.is_initialized = False
         self.logger = logging.getLogger(f"{__name__}.{module_name}")
         
         # Execution settings

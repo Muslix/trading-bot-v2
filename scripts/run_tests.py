@@ -47,9 +47,34 @@ def run_pytest():
             "description": "Tests für Decorators und Hilfsfunktionen"
         },
         {
-            "name": "📦 Unit Tests - Modules", 
+            "name": "📦 Unit Tests - Modules",
             "path": "tests/test_modules/",
             "description": "Tests für Portfolio Analyzer, Price Monitor, Arbitrage Detector"
+        },
+        {
+            "name": "🌐 WebSocket Tests",
+            "path": "tests/test_websocket/",
+            "description": "Tests für WebSocket Server, Client und Live Updates"
+        },
+        {
+            "name": "📡 Data Sources Tests",
+            "path": "tests/test_data_sources/",
+            "description": "Tests für Datenquellen und API-Adapter"
+        },
+        {
+            "name": "🚨 Alert System Tests",
+            "path": "tests/test_alerts/",
+            "description": "Tests für Telegram Bot und Smart Alerts"
+        },
+        {
+            "name": "🗄️ Database Tests",
+            "path": "tests/test_database/",
+            "description": "Tests für Datenbankoperationen und Migrations"
+        },
+        {
+            "name": "📊 Monitoring Tests",
+            "path": "tests/test_monitors/",
+            "description": "Tests für Monitoring und Performance Tracking"
         },
         {
             "name": "🔗 Integration Tests",

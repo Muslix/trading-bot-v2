@@ -86,6 +86,12 @@ class DatabaseManager(UniversalManager):
             self.logger.error(f"Failed to initialize database manager: {e}")
             return False
     
+    async def execute(self, operation: str, **kwargs) -> Any:
+        """Public interface for database operations"""
+        if not self.is_initialized:
+            await self.initialize()
+        return await self._execute(operation, **kwargs)
+    
     async def _execute(self, operation: str, **kwargs) -> Any:
         """Execute database operations"""
         try:

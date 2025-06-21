@@ -350,3 +350,12 @@ class UniversalFactory:
             'plugin_types': plugin_types,
             'module': self.module_name
         }
+
+
+# Alias for backward compatibility
+PluginFactory = UniversalFactory
+
+
+def create_plugin_factory(module_name: str) -> UniversalFactory:
+    """Create a plugin factory for a specific module"""
+    return UniversalFactory(module_name)

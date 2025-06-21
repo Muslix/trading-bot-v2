@@ -19,7 +19,8 @@ sys.path.append(project_root)
 try:
     from config.config import get_config
     from crypto_monitor_24_7 import CryptoMonitor24_7
-    from src.modules.telegram_bot import crypto_bot
+    from src.communication.plugins.telegram_communication import create_legacy_bot
+    crypto_bot = create_legacy_bot()
 except ImportError as e:
     print(f"Import error: {e}")
     sys.exit(1)

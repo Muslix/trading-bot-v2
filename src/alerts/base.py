@@ -37,14 +37,27 @@ class AlertConfig(ModuleConfig):
         """Validate alert configuration."""
         super().validate()
         
-        if self.threshold <= 0:
+        # Convert string values to appropriate types
+        try:
+            threshold = float(self.threshold) if isinstance(self.threshold, str) else self.threshold
+            cooldown_minutes = int(self.cooldown_minutes) if isinstance(self.cooldown_minutes, str) else self.cooldown_minutes
+            max_alerts_per_hour = int(self.max_alerts_per_hour) if isinstance(self.max_alerts_per_hour, str) else self.max_alerts_per_hour
+        except (ValueError, TypeError) as e:
+            raise ValueError(f"Invalid configuration value type: {e}")
+        
+        if threshold <= 0:
             raise ValueError("Alert threshold must be positive")
-        if self.cooldown_minutes < 0:
+        if cooldown_minutes < 0:
             raise ValueError("Cooldown minutes must be non-negative")
         if self.priority not in ["low", "medium", "high", "critical"]:
             raise ValueError("Priority must be one of: low, medium, high, critical")
-        if self.max_alerts_per_hour <= 0:
+        if max_alerts_per_hour <= 0:
             raise ValueError("Max alerts per hour must be positive")
+            
+        # Update the actual values with converted types
+        self.threshold = threshold
+        self.cooldown_minutes = cooldown_minutes
+        self.max_alerts_per_hour = max_alerts_per_hour
             
         return True
 

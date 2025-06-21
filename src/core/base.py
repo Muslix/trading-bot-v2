@@ -249,3 +249,7 @@ class UniversalPlugin(ABC):
     
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}(name='{self.name}', config={self.config})"
+
+
+# Alias for backward compatibility
+BasePlugin = UniversalPlugin

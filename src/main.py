@@ -19,19 +19,25 @@ sys.path.append(project_root)
 
 # Import specific functions that are used
 try:
-    from src.modules.arbitrage_detector import (
-        alert_system,
+    # New plugin architecture imports
+    from src.analyzers.plugins.arbitrage_analyzer import (
         detect_arbitrage_opportunities,
+    )
+    from src.communication.plugins.telegram_communication import (
+        alert_system,
     )
     from src.adapters import (
         analyze_crypto_portfolio_enhanced,
         compare_timeframes,
     )
-    from src.modules.portfolio_analyzer import (
+    from src.analyzers.plugins.portfolio_analyzer import (
         get_top_cryptocurrencies,
     )
-    # price_monitor functions now in real_price_monitor
-    from src.modules.real_price_monitor import monitor_real_exchange_prices
+    from src.monitors.plugins.price_monitor import monitor_real_exchange_prices
+    
+    # New Utils integration
+    from src.utils import create_util_manager
+    
 except ImportError as e:
     print(f"Import error: {e}")
     sys.exit(1)
@@ -91,6 +97,11 @@ async def crypto_portfolio_analyzer():
     print("\n" + "=" * 60)
     print("ENHANCED CRYPTO PORTFOLIO ANALYZER")
     print("=" * 60)
+
+    # Initialize Utils Manager
+    print("🔧 Initializing Utils Manager...")
+    util_manager = await create_util_manager({'log_level': 'INFO'})
+    print(f"✅ Utils Manager ready with {len(util_manager.plugins)} plugins")
 
     # Erweiterte Krypto-Liste
     crypto_symbols = get_top_cryptocurrencies(100)  # Standard: 100 Coins

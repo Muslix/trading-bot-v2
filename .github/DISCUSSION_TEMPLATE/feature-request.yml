@@ -1,0 +1,159 @@
+name: 💡 Feature Request
+about: Suggest a new feature for the trading bot
+labels: [enhancement, feature-request]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        # 💡 Feature Request
+        
+        We love hearing your ideas! Please provide details about the feature you'd like to see.
+        
+  - type: input
+    id: feature-name
+    attributes:
+      label: Feature Name
+      description: Give your feature a descriptive name
+      placeholder: e.g., "Real-time Portfolio Rebalancing"
+    validations:
+      required: true
+      
+  - type: dropdown
+    id: category
+    attributes:
+      label: Feature Category
+      description: Which area does this feature belong to?
+      options:
+        - Trading Strategies
+        - Exchange Integration
+        - User Interface
+        - Data Analysis
+        - Risk Management
+        - Notifications
+        - Performance Tracking
+        - DeFi Integration
+        - API Improvements
+        - Mobile App
+        - Other
+    validations:
+      required: true
+      
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority Level
+      description: How important is this feature to you?
+      options:
+        - Nice to have
+        - Would be helpful
+        - Important
+        - Critical
+    validations:
+      required: true
+      
+  - type: textarea
+    id: problem-description
+    attributes:
+      label: Problem Description
+      description: What problem does this feature solve?
+      placeholder: |
+        Describe:
+        - The current limitation or pain point
+        - How this affects your trading workflow
+        - Why existing solutions aren't sufficient
+    validations:
+      required: true
+      
+  - type: textarea
+    id: proposed-solution
+    attributes:
+      label: Proposed Solution
+      description: How should this feature work?
+      placeholder: |
+        Describe:
+        - The desired functionality
+        - How users would interact with it
+        - Expected behavior and outputs
+        - Integration with existing features
+    validations:
+      required: true
+      
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives Considered
+      description: What other approaches have you thought about?
+      placeholder: |
+        List any alternative solutions you've considered:
+        - Other ways to solve the same problem
+        - Existing tools or workarounds you've tried
+        - Why those alternatives aren't ideal
+        
+  - type: textarea
+    id: use-cases
+    attributes:
+      label: Use Cases
+      description: Who would benefit from this feature and how?
+      placeholder: |
+        Examples:
+        - Beginner traders could...
+        - Professional traders could...
+        - Portfolio managers could...
+        - DeFi users could...
+    validations:
+      required: true
+      
+  - type: textarea
+    id: mockup
+    attributes:
+      label: Mockup or Examples
+      description: Any visual examples, mockups, or similar implementations?
+      placeholder: |
+        Include links to:
+        - Screenshots or mockups
+        - Similar features in other platforms
+        - Code examples or pseudocode
+        - API specifications
+        
+  - type: input
+    id: affected-components
+    attributes:
+      label: Affected Components
+      description: Which parts of the system would this feature touch?
+      placeholder: e.g., Web API, Database, Frontend, Strategy Engine
+      
+  - type: checkboxes
+    id: complexity
+    attributes:
+      label: Implementation Complexity (estimate)
+      description: How complex do you think this feature would be to implement?
+      options:
+        - label: Simple (a few hours of work)
+        - label: Medium (a few days of work)
+        - label: Complex (weeks of work)
+        - label: Major (months of work)
+        - label: I'm not sure
+          
+  - type: checkboxes
+    id: contribution
+    attributes:
+      label: Contribution Interest
+      description: Would you be interested in helping implement this feature?
+      options:
+        - label: I could help with design/planning
+        - label: I could help with coding
+        - label: I could help with testing
+        - label: I could help with documentation
+        - label: I prefer to just request and wait
+        
+  - type: markdown
+    attributes:
+      value: |
+        ## 🔄 What Happens Next?
+        
+        1. **Community Discussion**: Other users can comment and vote
+        2. **Maintainer Review**: Core team will evaluate feasibility
+        3. **Roadmap Planning**: Accepted features are added to the roadmap
+        4. **Implementation**: Features are developed based on priority
+        
+        Thank you for helping improve our trading bot! 🎯

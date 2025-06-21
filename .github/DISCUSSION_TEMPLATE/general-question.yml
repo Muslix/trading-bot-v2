@@ -1,0 +1,108 @@
+name: ❓ General Question
+about: Ask a question about the trading bot
+labels: [question]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        # ❓ Ask a Question
+        
+        Have a question about the trading bot? We're here to help!
+        
+        Before asking, please check:
+        - 📖 [Documentation](../../README.md)
+        - 🔍 [Existing discussions](../../discussions)
+        - 🐛 [Known issues](../../issues)
+        
+  - type: dropdown
+    id: question-type
+    attributes:
+      label: Question Type
+      description: What type of question is this?
+      options:
+        - Getting Started
+        - Configuration
+        - Trading Strategies
+        - Exchange Setup
+        - Technical Issue
+        - Performance
+        - DeFi Features
+        - Strategy Sharing
+        - API Usage
+        - Other
+    validations:
+      required: true
+      
+  - type: dropdown
+    id: experience-level
+    attributes:
+      label: Experience Level
+      description: How would you describe your experience?
+      options:
+        - Beginner (new to trading bots)
+        - Intermediate (some experience)
+        - Advanced (experienced user)
+        - Expert (very experienced)
+    validations:
+      required: true
+      
+  - type: textarea
+    id: question
+    attributes:
+      label: Your Question
+      description: What would you like to know?
+      placeholder: |
+        Please be specific and provide context:
+        - What are you trying to achieve?
+        - What have you tried so far?
+        - What specific help do you need?
+    validations:
+      required: true
+      
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional Context
+      description: Any additional information that might help us understand your question
+      placeholder: |
+        Optional details:
+        - Your setup (OS, Python version, etc.)
+        - Relevant configuration
+        - Screenshots or error messages
+        - Links to related resources
+        
+  - type: textarea
+    id: attempted-solutions
+    attributes:
+      label: What have you tried?
+      description: What solutions or approaches have you already attempted?
+      placeholder: |
+        List what you've tried:
+        - Documentation sections you've read
+        - Code changes you've made
+        - Error messages you've encountered
+        - Other approaches you've considered
+        
+  - type: checkboxes
+    id: urgency
+    attributes:
+      label: Urgency Level
+      description: How urgent is this question?
+      options:
+        - label: Not urgent - whenever someone has time
+        - label: Moderate - would like an answer this week
+        - label: Urgent - need help soon
+        - label: Critical - blocking my work
+        
+  - type: markdown
+    attributes:
+      value: |
+        ## 💡 Getting Better Help
+        
+        To get the best help:
+        - **Be specific**: Include exact error messages, configurations, and steps
+        - **Share context**: Tell us what you're trying to achieve
+        - **Show your work**: Include code snippets or screenshots
+        - **Be patient**: Community members volunteer their time
+        
+        Thank you for being part of our community! 🙏

@@ -6,10 +6,11 @@ cryptocurrency data sources using the Universal Plugin Pattern.
 """
 
 from .base import DataSourcePlugin, DataSourceConfig
-from .manager import DataSourceManager
+from .manager import DataSourceManager, create_data_source_manager
 
 __all__ = [
     'DataSourcePlugin',
     'DataSourceConfig',
-    'DataSourceManager'
+    'DataSourceManager',
+    'create_data_source_manager'
 ]

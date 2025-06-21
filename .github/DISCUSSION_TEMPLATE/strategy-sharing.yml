@@ -1,0 +1,160 @@
+name: 📊 Strategy Sharing
+about: Share your trading strategy with the community
+labels: [strategy, community]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        # 📈 Share Your Trading Strategy
+        
+        Thank you for contributing to our strategy community! Please provide details about your strategy so others can understand and potentially use it.
+        
+  - type: input
+    id: strategy-name
+    attributes:
+      label: Strategy Name
+      description: Give your strategy a descriptive name
+      placeholder: e.g., "RSI Mean Reversion with SMA Filter"
+    validations:
+      required: true
+      
+  - type: dropdown
+    id: category
+    attributes:
+      label: Strategy Category
+      description: What type of strategy is this?
+      options:
+        - Arbitrage
+        - Momentum
+        - Mean Reversion
+        - Scalping
+        - Swing Trading
+        - DeFi Yield
+        - Grid Trading
+        - Technical Indicators
+        - Machine Learning
+        - Other
+    validations:
+      required: true
+      
+  - type: dropdown
+    id: risk-level
+    attributes:
+      label: Risk Level
+      description: How risky is this strategy?
+      options:
+        - Low
+        - Medium
+        - High
+        - Extreme
+    validations:
+      required: true
+      
+  - type: dropdown
+    id: timeframe
+    attributes:
+      label: Recommended Timeframe
+      description: What timeframe works best for this strategy?
+      options:
+        - 1m
+        - 5m
+        - 15m
+        - 1h
+        - 4h
+        - 1d
+        - 1w
+    validations:
+      required: true
+      
+  - type: input
+    id: min-capital
+    attributes:
+      label: Minimum Capital Required
+      description: What's the minimum capital needed to run this strategy effectively?
+      placeholder: e.g., $5,000
+    validations:
+      required: true
+      
+  - type: textarea
+    id: description
+    attributes:
+      label: Strategy Description
+      description: Explain how your strategy works
+      placeholder: |
+        Describe:
+        - The core logic of your strategy
+        - Entry and exit conditions
+        - Risk management approach
+        - Market conditions where it works best
+        - Any special considerations
+    validations:
+      required: true
+      
+  - type: textarea
+    id: performance-metrics
+    attributes:
+      label: Performance Metrics
+      description: Share any backtesting or live trading results (optional)
+      placeholder: |
+        If available, include:
+        - Sharpe Ratio
+        - Annual Return
+        - Maximum Drawdown
+        - Win Rate
+        - Total Trades
+        - Testing Period
+        
+  - type: textarea
+    id: code
+    attributes:
+      label: Strategy Code
+      description: Paste your strategy code here
+      placeholder: |
+        ```python
+        def strategy_logic(data):
+            # Your strategy logic here
+            pass
+            
+        def get_signals(data):
+            # Signal generation logic
+            pass
+        ```
+      render: python
+    validations:
+      required: true
+      
+  - type: input
+    id: tags
+    attributes:
+      label: Tags
+      description: Add relevant tags (comma-separated)
+      placeholder: e.g., rsi, bollinger-bands, crypto, forex
+      
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Pre-submission Checklist
+      description: Please ensure you've completed these steps
+      options:
+        - label: I have tested this strategy thoroughly
+          required: true
+        - label: The code follows the required format (strategy_logic and get_signals functions)
+          required: true
+        - label: I have not included any dangerous or malicious code
+          required: true
+        - label: I understand this code will be shared publicly
+          required: true
+        - label: I have provided realistic performance expectations
+          required: false
+          
+  - type: markdown
+    attributes:
+      value: |
+        ## 📋 What Happens Next?
+        
+        1. **Community Review**: Other members will review and test your strategy
+        2. **Feedback**: You'll receive comments and suggestions
+        3. **Verification**: High-performing strategies may earn a "Verified" badge
+        4. **Integration**: Approved strategies can be added to the platform
+        
+        Thank you for contributing to our trading community! 🚀

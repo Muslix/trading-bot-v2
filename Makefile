@@ -35,13 +35,104 @@ secure-setup: ## 🔒 Interactive secure configuration setup
 	@chmod +x scripts/secure_setup.sh
 	@./scripts/secure_setup.sh
 
-test: ## 🧪 Run all tests
-	@echo "$(GREEN)🧪 Running test suite...$(NC)"
-	cd scripts && $(PYTHON) run_tests.py
+test: ## 🧪 Run all tests (comprehensive test suite)
+	@echo "$(GREEN)🧪 Running comprehensive test suite...$(NC)"
+	@echo "$(BLUE)📊 Running pytest with coverage and detailed output$(NC)"
+	$(PYTHON) -m pytest tests/ -v --tb=short --cov=src --cov-report=term-missing --cov-report=html
 
-test-quick: ## ⚡ Run quick tests only
+test-quick: ## ⚡ Run quick tests only (modules + utils)
 	@echo "$(YELLOW)⚡ Running quick tests...$(NC)"
-	$(PYTHON) -m pytest tests/test_modules/ -v
+	$(PYTHON) -m pytest tests/test_modules/ tests/test_utils/ -v --tb=short
+
+test-websocket: ## 🌐 Run WebSocket tests only
+	@echo "$(CYAN)🌐 Running WebSocket tests...$(NC)"
+	$(PYTHON) -m pytest tests/test_websocket/ -v --tb=short
+
+test-websocket-fast: ## ⚡ Run fast WebSocket tests only
+	@echo "$(CYAN)⚡ Running fast WebSocket tests...$(NC)"
+	$(PYTHON) -m pytest tests/test_websocket/test_websocket_client_fast.py -v --tb=short
+
+test-websocket-parallel: ## 🚀 Run WebSocket tests in parallel
+	@echo "$(CYAN)🚀 Running WebSocket tests in parallel...$(NC)"
+	$(PYTHON) -m pytest tests/test_websocket/ -v --tb=short -n auto
+
+test-parallel: ## 🚀 Run all tests in parallel
+	@echo "$(GREEN)🚀 Running all tests in parallel...$(NC)"
+	$(PYTHON) -m pytest tests/ -v --tb=short -n auto --maxfail=5
+
+test-working: ## ✅ Run only working tests (skip problematic ones)
+	@echo "$(GREEN)✅ Running only working tests...$(NC)"
+	$(PYTHON) -m pytest tests/ -v --tb=short -m "not skip_async and not skip_missing" --maxfail=3
+
+test-integration: ## 🔗 Run integration tests only
+	@echo "$(BLUE)🔗 Running integration tests...$(NC)"
+	$(PYTHON) -m pytest tests/test_integration.py -v --tb=short
+
+test-modules: ## 📦 Run module tests only
+	@echo "$(YELLOW)📦 Running module tests...$(NC)"
+	$(PYTHON) -m pytest tests/test_modules/ -v --tb=short
+
+test-data-sources: ## 📡 Run data sources tests only
+	@echo "$(GREEN)📡 Running data sources tests...$(NC)"
+	$(PYTHON) -m pytest tests/test_data_sources/ -v --tb=short
+
+test-alerts: ## 🚨 Run alerts tests only
+	@echo "$(RED)🚨 Running alerts tests...$(NC)"
+	$(PYTHON) -m pytest tests/test_alerts/ -v --tb=short
+
+test-database: ## 🗄️ Run database tests only
+	@echo "$(CYAN)🗄️ Running database tests...$(NC)"
+	$(PYTHON) -m pytest tests/test_database/ -v --tb=short
+
+test-monitors: ## 📊 Run monitoring tests only
+	@echo "$(BLUE)📊 Running monitoring tests...$(NC)"
+	$(PYTHON) -m pytest tests/test_monitors/ -v --tb=short
+
+test-coverage: ## 📈 Run tests with detailed coverage report
+	@echo "$(GREEN)📈 Running tests with coverage analysis...$(NC)"
+	$(PYTHON) -m pytest tests/ --cov=src --cov-report=term-missing --cov-report=html --cov-report=xml
+	@echo "$(CYAN)📄 HTML Coverage report: htmlcov/index.html$(NC)"
+
+test-performance: ## ⚡ Run performance tests only
+	@echo "$(YELLOW)⚡ Running performance tests...$(NC)"
+	$(PYTHON) -m pytest tests/ -v -k "performance or timing or speed" --durations=10
+
+test-ci: ## 🤖 Run tests for CI/CD (with strict settings)
+	@echo "$(BLUE)🤖 Running CI/CD test suite...$(NC)"
+	$(PYTHON) -m pytest tests/ -v --tb=short --strict-markers --strict-config
+
+test-list: ## 📋 List all available test categories
+	@echo "$(CYAN)📋 Available Test Categories:$(NC)"
+	@echo "$(YELLOW)═══════════════════════════════════════$(NC)"
+	@echo "$(GREEN)🧪 make test$(NC)              - Run ALL tests (comprehensive)"
+	@echo "$(YELLOW)⚡ make test-quick$(NC)         - Quick tests (modules + utils)"
+	@echo "$(CYAN)🌐 make test-websocket$(NC)     - WebSocket functionality tests"
+	@echo "$(BLUE)🔗 make test-integration$(NC)   - Integration tests"
+	@echo "$(YELLOW)📦 make test-modules$(NC)       - Module unit tests"
+	@echo "$(GREEN)📡 make test-data-sources$(NC)  - Data sources tests"
+	@echo "$(RED)🚨 make test-alerts$(NC)        - Alert system tests" 
+	@echo "$(CYAN)🗄️ make test-database$(NC)      - Database tests"
+	@echo "$(BLUE)📊 make test-monitors$(NC)      - Monitoring tests"
+	@echo "$(GREEN)📈 make test-coverage$(NC)      - Tests with coverage report"
+	@echo "$(YELLOW)⚡ make test-performance$(NC)   - Performance tests only"
+	@echo "$(BLUE)🤖 make test-ci$(NC)            - CI/CD test suite"
+	@echo "$(YELLOW)═══════════════════════════════════════$(NC)"
+
+test-stats: ## 📊 Show test statistics
+	@echo "$(CYAN)📊 Test Statistics:$(NC)"
+	@echo "$(BLUE)Counting test files...$(NC)"
+	@find tests/ -name "test_*.py" | wc -l | xargs echo "📁 Test files:"
+	@find tests/ -name "test_*.py" -exec grep -l "def test_" {} \; | wc -l | xargs echo "🧪 Files with tests:"
+	@find tests/ -name "test_*.py" -exec grep "def test_" {} \; | wc -l | xargs echo "✅ Total test functions:"
+	@echo "$(GREEN)Test directories:$(NC)"
+	@find tests/ -type d -name "test_*" | sort
+
+test-validate: ## 🔍 Validate test setup and dependencies
+	@echo "$(BLUE)🔍 Validating test environment...$(NC)"
+	@$(PYTHON) -c "import pytest; print('✅ pytest available')"
+	@$(PYTHON) -c "import pytest_cov; print('✅ pytest-cov available')" 2>/dev/null || echo "⚠️ pytest-cov not installed (optional)"
+	@$(PYTHON) -c "import coverage; print('✅ coverage available')" 2>/dev/null || echo "⚠️ coverage not installed (optional)"
+	@echo "$(GREEN)✅ Test environment validation completed$(NC)"
 
 ##@ Running the Bot
 run: ## 🚀 Run the trading bot (single execution)
@@ -82,12 +173,29 @@ stop: ## ⏹️ Stop all bot processes
 	@pkill -f "src/web_api.py" || echo "$(YELLOW)No web API process found$(NC)"
 	@echo "$(GREEN)✅ All processes stopped$(NC)"
 
-logs: ## 📄 Show bot logs
-	@if [ -f bot.log ]; then \
-		tail -50 bot.log; \
-	else \
-		echo "$(YELLOW)No log file found$(NC)"; \
-	fi
+logs: ## 📄 Show bot logs (real-time monitoring)
+	@echo "$(CYAN)📊 Monitoring production logs...$(NC)"
+	@$(PYTHON) scripts/monitor_logs.py
+
+logs-summary: ## 📋 Show log files summary
+	@echo "$(CYAN)📊 Log files summary:$(NC)"
+	@$(PYTHON) scripts/monitor_logs.py --summary
+
+logs-arbitrage: ## 🔍 Monitor arbitrage logs only
+	@echo "$(GREEN)🔍 Monitoring arbitrage logs...$(NC)"
+	@$(PYTHON) scripts/monitor_logs.py --component arbitrage
+
+logs-performance: ## 📈 Monitor performance logs only
+	@echo "$(GREEN)📈 Monitoring performance logs...$(NC)"
+	@$(PYTHON) scripts/monitor_logs.py --component performance
+
+logs-errors: ## 🔴 Monitor error logs only
+	@echo "$(RED)🔴 Monitoring error logs...$(NC)"
+	@$(PYTHON) scripts/monitor_logs.py --filter ERROR
+
+validate-logging: ## 🧪 Test logging configuration
+	@echo "$(BLUE)🧪 Validating logging setup...$(NC)"
+	@$(PYTHON) scripts/validate_logging.py
 
 ##@ Docker & Containerization
 docker-build: ## 🐳 Build Docker image
@@ -213,6 +321,10 @@ pre-commit-quick:
 	@python -m pytest tests/test_integration.py -x --tb=short
 	@echo "✅ Quick checks passed!"
 
-# Full test suite
-test-all:
-	@python -m pytest tests/ -v --tb=short
+# Full test suite with all options
+test-all: ## 🎯 Complete test suite (all tests + coverage + performance)
+	@echo "$(GREEN)🎯 Running COMPLETE test suite...$(NC)"
+	@echo "$(BLUE)This includes: Unit tests, Integration tests, WebSocket tests, Coverage analysis$(NC)"
+	@$(MAKE) test-validate
+	@$(PYTHON) -m pytest tests/ -v --tb=short --cov=src --cov-report=term-missing --cov-report=html --durations=10
+	@echo "$(CYAN)📄 Coverage report available at: htmlcov/index.html$(NC)"

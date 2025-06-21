@@ -265,3 +265,28 @@ class DataSourceManager(UniversalManager):
             'available_sources': sum(1 for status in source_availability.values() if status['available']),
             'timestamp': datetime.now().isoformat()
         }
+
+
+# Factory function for compatibility
+async def create_data_source_manager(config: Dict[str, Any] = None) -> DataSourceManager:
+    """
+    Create and initialize a DataSourceManager instance.
+    
+    Args:
+        config: Configuration dictionary for data sources
+        
+    Returns:
+        Initialized DataSourceManager instance
+    """
+    manager = DataSourceManager()
+    
+    # Use provided config or default
+    if config is None:
+        config = {
+            'yahoo_finance': {'enabled': True, 'cache_ttl_seconds': 300},
+            'coingecko': {'enabled': True, 'cache_ttl_seconds': 300, 'rate_limit_per_minute': 50},
+            'binance': {'enabled': True, 'cache_ttl_seconds': 60}
+        }
+    
+    await manager.initialize(config)
+    return manager

@@ -22,7 +22,8 @@ from .plugins import (
 
 # Import telegram bot for sending alerts
 try:
-    from src.modules.telegram_bot import crypto_bot
+    from src.communication.plugins.telegram_communication import create_legacy_bot
+    crypto_bot = create_legacy_bot()
 except ImportError:
     crypto_bot = None
     logging.warning("Telegram bot not available - alerts will be logged only")
@@ -61,10 +62,23 @@ class AlertManager(UniversalManager):
     def _register_default_plugins(self):
         """Register all default alert plugins with their configurations."""
         try:
+            # Helper function to safely convert config values
+            def safe_float(value, default):
+                try:
+                    return float(value) if value is not None else default
+                except (ValueError, TypeError):
+                    return default
+            
+            def safe_int(value, default):
+                try:
+                    return int(value) if value is not None else default
+                except (ValueError, TypeError):
+                    return default
+            
             # Arbitrage Alert
             arbitrage_config = AlertConfig(
-                threshold=self.config_dict.get('arbitrage_threshold', 2.0),
-                cooldown_minutes=self.config_dict.get('arbitrage_cooldown', 30),
+                threshold=safe_float(self.config_dict.get('arbitrage_threshold'), 2.0),
+                cooldown_minutes=safe_int(self.config_dict.get('arbitrage_cooldown'), 30),
                 priority="high",
                 enabled=True
             )
@@ -72,7 +86,7 @@ class AlertManager(UniversalManager):
             
             # Performance Alert
             performance_config = AlertConfig(
-                threshold=self.config_dict.get('sharpe_change_threshold', 0.5),
+                threshold=safe_float(self.config_dict.get('sharpe_change_threshold'), 0.5),
                 cooldown_minutes=30,
                 priority="medium",
                 enabled=True,
@@ -82,7 +96,7 @@ class AlertManager(UniversalManager):
             
             # Price Movement Alert
             price_movement_config = AlertConfig(
-                threshold=self.config_dict.get('price_movement_threshold', 5.0),
+                threshold=safe_float(self.config_dict.get('price_movement_threshold'), 5.0),
                 cooldown_minutes=60,
                 priority="medium",
                 enabled=True,
@@ -152,12 +166,46 @@ class AlertManager(UniversalManager):
     
     def _create_default_config(self, plugin_name: str) -> AlertConfig:
         """Create default configuration for a plugin."""
+        # Helper function to safely convert config values
+        def safe_float(value, default):
+            try:
+                return float(value) if value is not None else default
+            except (ValueError, TypeError):
+                return default
+        
+        def safe_int(value, default):
+            try:
+                return int(value) if value is not None else default
+            except (ValueError, TypeError):
+                return default
+        
         defaults = {
-            "arbitrage": AlertConfig(threshold=2.0, cooldown_minutes=30, priority="high"),
-            "performance": AlertConfig(threshold=0.5, cooldown_minutes=30, priority="medium"),
-            "price_movement": AlertConfig(threshold=5.0, cooldown_minutes=60, priority="medium"),
-            "volume_spike": AlertConfig(threshold=200.0, cooldown_minutes=120, priority="low", enabled=False),
-            "daily_summary": AlertConfig(threshold=0, cooldown_minutes=60, priority="low")
+            "arbitrage": AlertConfig(
+                threshold=safe_float(self.config_dict.get('arbitrage_threshold'), 2.0), 
+                cooldown_minutes=safe_int(self.config_dict.get('alert_cooldown_minutes'), 30), 
+                priority="high"
+            ),
+            "performance": AlertConfig(
+                threshold=safe_float(self.config_dict.get('sharpe_change_threshold'), 0.5), 
+                cooldown_minutes=safe_int(self.config_dict.get('alert_cooldown_minutes'), 30), 
+                priority="medium"
+            ),
+            "price_movement": AlertConfig(
+                threshold=safe_float(self.config_dict.get('price_movement_threshold'), 5.0), 
+                cooldown_minutes=safe_int(self.config_dict.get('alert_cooldown_minutes'), 60), 
+                priority="medium"
+            ),
+            "volume_spike": AlertConfig(
+                threshold=200.0, 
+                cooldown_minutes=safe_int(self.config_dict.get('alert_cooldown_minutes'), 120), 
+                priority="low", 
+                enabled=False
+            ),
+            "daily_summary": AlertConfig(
+                threshold=0, 
+                cooldown_minutes=safe_int(self.config_dict.get('alert_cooldown_minutes'), 60), 
+                priority="low"
+            )
         }
         
         return defaults.get(plugin_name, AlertConfig())
