@@ -6,6 +6,7 @@ Each alert type is a separate plugin that can be independently configured and en
 """
 
 from .arbitrage_alert import ArbitrageAlert
+from .smart_arbitrage_alert import SmartArbitrageAlert
 from .performance_alert import PerformanceAlert
 from .price_movement_alert import PriceMovementAlert
 from .volume_alert import VolumeAlert
@@ -13,6 +14,7 @@ from .daily_summary_alert import DailySummaryAlert
 
 __all__ = [
     'ArbitrageAlert',
+    'SmartArbitrageAlert',
     'PerformanceAlert', 
     'PriceMovementAlert',
     'VolumeAlert',

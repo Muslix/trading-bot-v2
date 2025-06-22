@@ -14,6 +14,7 @@ from src.core import UniversalManager, ModuleConfig
 from .base import AlertConfig
 from .plugins import (
     ArbitrageAlert,
+    SmartArbitrageAlert,
     PerformanceAlert, 
     PriceMovementAlert,
     VolumeAlert,
@@ -75,14 +76,29 @@ class AlertManager(UniversalManager):
                 except (ValueError, TypeError):
                     return default
             
-            # Arbitrage Alert
+            # Arbitrage Alert (Basic)
             arbitrage_config = AlertConfig(
                 threshold=safe_float(self.config_dict.get('arbitrage_threshold'), 2.0),
                 cooldown_minutes=safe_int(self.config_dict.get('arbitrage_cooldown'), 30),
-                priority="high",
-                enabled=True
+                priority="medium",
+                enabled=False  # Disable basic arbitrage in favor of smart version
             )
             self.factory.register("arbitrage", ArbitrageAlert)
+            
+            # Smart Arbitrage Alert (Enhanced with ML)
+            smart_arbitrage_config = AlertConfig(
+                threshold=safe_float(self.config_dict.get('smart_arbitrage_threshold'), 1.5),
+                cooldown_minutes=safe_int(self.config_dict.get('smart_arbitrage_cooldown'), 15),
+                priority="high",
+                enabled=True,
+                custom_settings={
+                    "min_profit_threshold": 1.5,
+                    "volume_threshold": 1000,
+                    "volatility_factor": 0.5,
+                    "success_learning": True
+                }
+            )
+            self.factory.register("smart_arbitrage", SmartArbitrageAlert)
             
             # Performance Alert
             performance_config = AlertConfig(
@@ -183,7 +199,20 @@ class AlertManager(UniversalManager):
             "arbitrage": AlertConfig(
                 threshold=safe_float(self.config_dict.get('arbitrage_threshold'), 2.0), 
                 cooldown_minutes=safe_int(self.config_dict.get('alert_cooldown_minutes'), 30), 
-                priority="high"
+                priority="medium",
+                enabled=False
+            ),
+            "smart_arbitrage": AlertConfig(
+                threshold=safe_float(self.config_dict.get('smart_arbitrage_threshold'), 1.5), 
+                cooldown_minutes=safe_int(self.config_dict.get('smart_arbitrage_cooldown'), 15), 
+                priority="high",
+                enabled=True,
+                custom_settings={
+                    "min_profit_threshold": 1.5,
+                    "volume_threshold": 1000,
+                    "volatility_factor": 0.5,
+                    "success_learning": True
+                }
             ),
             "performance": AlertConfig(
                 threshold=safe_float(self.config_dict.get('sharpe_change_threshold'), 0.5), 

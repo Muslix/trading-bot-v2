@@ -15,6 +15,7 @@ from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
 from flask_socketio import SocketIO, emit
 import random
+import numpy as np
 
 # Add project root to Python path
 project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -195,6 +196,124 @@ class SimpleWebAPI:
             except Exception as e:
                 self.logger.error(f"Error in arbitrage-alerts: {e}")
                 return jsonify({'success': False, 'error': str(e)}), 500
+        
+        @self.app.route('/api/sentiment-analysis')
+        def sentiment_analysis():
+            """Get AI-powered sentiment analysis and trading signals"""
+            try:
+                # Get symbols from request or use defaults
+                symbols = request.args.get('symbols', 'BTC,ETH,ADA,DOT,LINK').split(',')
+                timeframe = request.args.get('timeframe', '24h')
+                
+                # Mock sentiment analysis data for demo
+                sentiment_results = {}
+                market_sentiment_scores = []
+                
+                for symbol in symbols:
+                    # Generate realistic sentiment data
+                    sentiment_score = np.random.normal(0, 0.4)  # Normal distribution around neutral
+                    confidence = np.random.uniform(0.6, 0.95)  # High confidence for demo
+                    
+                    # Determine sentiment category
+                    if sentiment_score > 0.3:
+                        category = 'bullish'
+                        signal = 'buy' if sentiment_score > 0.5 else 'weak_buy'
+                    elif sentiment_score < -0.3:
+                        category = 'bearish' 
+                        signal = 'sell' if sentiment_score < -0.5 else 'weak_sell'
+                    else:
+                        category = 'neutral'
+                        signal = 'hold'
+                    
+                    # Mock news and social sentiment
+                    sentiment_results[symbol] = {
+                        'aggregated_sentiment': {
+                            'score': sentiment_score,
+                            'confidence': confidence,
+                            'category': category,
+                            'strength': abs(sentiment_score)
+                        },
+                        'sentiment_scores': {
+                            'news': {
+                                'score': np.random.normal(sentiment_score, 0.2),
+                                'confidence': np.random.uniform(0.7, 0.9),
+                                'article_count': np.random.randint(5, 15)
+                            },
+                            'social': {
+                                'score': np.random.normal(sentiment_score * 1.2, 0.3),  # Social is more extreme
+                                'confidence': np.random.uniform(0.6, 0.8),
+                                'post_count': np.random.randint(50, 200)
+                            },
+                            'technical': {
+                                'score': np.random.normal(0, 0.3),
+                                'confidence': 0.75,
+                                'indicators': {
+                                    'rsi': np.random.uniform(20, 80),
+                                    'macd_signal': np.random.choice([-1, 0, 1]),
+                                    'ma_trend': np.random.choice([-1, 0, 1])
+                                }
+                            }
+                        },
+                        'trading_signals': {
+                            'signal': signal,
+                            'strength': min(1.0, abs(sentiment_score) * confidence),
+                            'confidence': confidence,
+                            'sentiment_score': sentiment_score
+                        }
+                    }
+                    
+                    market_sentiment_scores.append(sentiment_score)
+                
+                # Calculate market-wide sentiment
+                market_score = np.mean(market_sentiment_scores)
+                fear_greed_index = int((market_score + 1) * 50)  # Convert to 0-100 scale
+                
+                if market_score > 0.2:
+                    overall_sentiment = 'bullish'
+                elif market_score < -0.2:
+                    overall_sentiment = 'bearish'
+                else:
+                    overall_sentiment = 'neutral'
+                
+                # Generate trading recommendations
+                recommendations = []
+                for symbol, data in sentiment_results.items():
+                    signals = data['trading_signals']
+                    if signals['confidence'] > 0.7 and signals['strength'] > 0.5:
+                        recommendations.append({
+                            'symbol': symbol,
+                            'action': signals['signal'],
+                            'strength': signals['strength'],
+                            'confidence': signals['confidence'],
+                            'reasoning': f"{data['aggregated_sentiment']['category'].title()} sentiment detected with {signals['confidence']:.1%} confidence",
+                            'risk_level': 'low' if signals['confidence'] > 0.8 else 'medium',
+                            'priority': signals['strength'] * signals['confidence']
+                        })
+                
+                # Sort recommendations by priority
+                recommendations.sort(key=lambda x: x['priority'], reverse=True)
+                
+                return jsonify({
+                    'sentiment_results': sentiment_results,
+                    'market_sentiment': {
+                        'overall': overall_sentiment,
+                        'score': market_score,
+                        'fear_greed_index': fear_greed_index,
+                        'confidence': np.mean([r['aggregated_sentiment']['confidence'] for r in sentiment_results.values()])
+                    },
+                    'trading_recommendations': recommendations[:5],  # Top 5
+                    'analysis_summary': {
+                        'total_symbols_analyzed': len(symbols),
+                        'strong_signals': len([r for r in sentiment_results.values() 
+                                             if r['trading_signals']['strength'] > 0.7]),
+                        'timeframe': timeframe,
+                        'timestamp': datetime.now().isoformat()
+                    }
+                })
+                
+            except Exception as e:
+                self.logger.error(f"Sentiment analysis error: {e}")
+                return jsonify({'error': str(e)}), 500
         
         @self.app.route('/api/performance-data')
         def performance_data():

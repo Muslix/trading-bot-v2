@@ -1,11 +1,44 @@
 # 🤖 Crypto Trading Bot v2.0
 
 [![CI/CD Pipeline](https://github.com/Muslix/trading-bot-v2/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/Muslix/trading-bot-v2/actions/workflows/ci-cd.yml)
-[![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
+[![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![Docker](https://img.shields.io/badge/docker-ready-blue.svg)](https://hub.docker.com/r/muslix/crypto-trading-bot)
 [![Security](https://img.shields.io/badge/security-audited-green.svg)](#security)
+[![One-Click Setup](https://img.shields.io/badge/setup-one--click-green.svg)](#quick-start)
 
-Ein fortschrittlicher, vollautomatischer Kryptowährungs-Trading-Bot mit Echtzeit-Überwachung, intelligenten Alerts und einer benutzerfreundlichen Web-Dashboard.
+Ein fortschrittlicher, vollautomatischer Kryptowährungs-Trading-Bot mit **intelligenten ML-basierten Alerts**, **Enhanced Visualizations** und **One-Click Setup**.
+
+## 🚀 Quick Start (< 5 Minuten!)
+
+### Option 1: One-Click Installation
+```bash
+# Clone repository
+git clone https://github.com/your-username/trading_bot_v2.git
+cd trading_bot_v2
+
+# Run one-click installer
+./install.sh
+
+# Start trading bot
+./start.sh
+```
+
+### Option 2: Python Setup Script
+```bash
+# Run interactive setup
+python3 setup.py
+
+# Start the bot
+./start.sh
+```
+
+**That's it!** 🎉 Your dashboard will be available at http://localhost:5000
+
+## 📊 Dashboard Preview
+- **Live Prices**: 25 cryptocurrencies with real-time updates
+- **Smart Arbitrage**: ML-filtered opportunities with execution analysis  
+- **Enhanced Charts**: Interactive heatmaps, correlation matrices, risk/return plots
+- **Mobile Ready**: Responsive design for all devices
 
 ## ✨ Features
 

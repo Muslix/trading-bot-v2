@@ -1,0 +1,452 @@
+/**
+ * Enhanced Charts CSS
+ * Styles for interactive charts and visualizations
+ */
+
+/* Arbitrage Heatmap Styles */
+.heatmap-container {
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 15px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+}
+
+.heatmap-header {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.heatmap-header h5 {
+    margin: 0;
+    color: #2C3E50;
+    font-weight: 700;
+}
+
+.heatmap-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin-bottom: 20px;
+}
+
+.heatmap-row {
+    display: flex;
+    gap: 2px;
+}
+
+.heatmap-cell {
+    flex: 1;
+    min-width: 80px;
+    height: 60px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.heatmap-cell.header {
+    background: #34495E;
+    color: white;
+    cursor: default;
+    font-weight: 700;
+    height: 40px;
+}
+
+.heatmap-cell.disabled {
+    background: #ECF0F1;
+    color: #BDC3C7;
+    cursor: default;
+}
+
+.heatmap-cell.high {
+    background: linear-gradient(135deg, #27AE60, #2ECC71);
+    color: white;
+}
+
+.heatmap-cell.medium {
+    background: linear-gradient(135deg, #F39C12, #F1C40F);
+    color: white;
+}
+
+.heatmap-cell.low {
+    background: linear-gradient(135deg, #95A5A6, #BDC3C7);
+    color: #2C3E50;
+}
+
+.heatmap-cell:not(.header):not(.disabled):hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    z-index: 10;
+}
+
+.cell-profit {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 2px;
+}
+
+.cell-count {
+    font-size: 10px;
+    opacity: 0.8;
+}
+
+.heatmap-legend {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: #34495E;
+}
+
+.legend-color {
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
+    display: block;
+}
+
+/* Correlation Matrix Styles */
+.correlation-container {
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 15px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+}
+
+.correlation-header {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.correlation-header h5 {
+    margin: 0;
+    color: #2C3E50;
+    font-weight: 700;
+}
+
+.correlation-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin-bottom: 20px;
+}
+
+.correlation-row {
+    display: flex;
+    gap: 2px;
+}
+
+.correlation-cell {
+    flex: 1;
+    min-width: 60px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.correlation-cell.header {
+    background: #2C3E50;
+    color: white;
+    font-weight: 700;
+    height: 35px;
+}
+
+.correlation-cell.strong-positive {
+    background: linear-gradient(135deg, #27AE60, #2ECC71);
+    color: white;
+}
+
+.correlation-cell.medium-positive {
+    background: linear-gradient(135deg, #58D68D, #82E0AA);
+    color: #1B4F3C;
+}
+
+.correlation-cell.neutral {
+    background: linear-gradient(135deg, #BDC3C7, #D5DBDB);
+    color: #2C3E50;
+}
+
+.correlation-cell.medium-negative {
+    background: linear-gradient(135deg, #F1948A, #F5B7B1);
+    color: #922B21;
+}
+
+.correlation-cell.strong-negative {
+    background: linear-gradient(135deg, #E74C3C, #EC7063);
+    color: white;
+}
+
+.correlation-cell:not(.header):hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    z-index: 10;
+}
+
+.correlation-legend {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+/* Chart Container Styles */
+.chart-container {
+    position: relative;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+}
+
+.chart-wrapper {
+    position: relative;
+    height: 400px;
+    width: 100%;
+}
+
+/* Opportunity Modal Styles */
+.opportunity-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    animation: fadeIn 0.3s ease;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 15px;
+    padding: 0;
+    max-width: 500px;
+    width: 90%;
+    max-height: 80vh;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    animation: slideIn 0.3s ease;
+}
+
+.modal-header {
+    background: linear-gradient(135deg, #3498DB, #2980B9);
+    color: white;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h5 {
+    margin: 0;
+    font-weight: 700;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background 0.3s ease;
+}
+
+.close-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.modal-body {
+    padding: 20px;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.opportunity-item {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    margin-bottom: 10px;
+    background: #F8F9FA;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+.opportunity-item:hover {
+    background: #E9ECEF;
+    transform: translateX(5px);
+}
+
+.opp-symbol {
+    font-weight: 700;
+    font-size: 16px;
+    color: #2C3E50;
+    min-width: 60px;
+}
+
+.opp-profit {
+    font-weight: 700;
+    font-size: 18px;
+    min-width: 80px;
+    text-align: center;
+    padding: 5px 10px;
+    border-radius: 20px;
+    margin: 0 15px;
+}
+
+.opp-profit.high {
+    background: #27AE60;
+    color: white;
+}
+
+.opp-profit.medium {
+    background: #F39C12;
+    color: white;
+}
+
+.opp-profit.low {
+    background: #95A5A6;
+    color: white;
+}
+
+.opp-details {
+    font-size: 12px;
+    color: #7F8C8D;
+    flex: 1;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .heatmap-cell, .correlation-cell {
+        min-width: 50px;
+        height: 45px;
+        font-size: 10px;
+    }
+    
+    .cell-profit {
+        font-size: 12px;
+    }
+    
+    .cell-count {
+        font-size: 8px;
+    }
+    
+    .heatmap-legend, .correlation-legend {
+        gap: 10px;
+    }
+    
+    .legend-item {
+        gap: 5px;
+        font-size: 11px;
+    }
+    
+    .chart-wrapper {
+        height: 300px;
+    }
+    
+    .modal-content {
+        width: 95%;
+        margin: 10px;
+    }
+    
+    .opportunity-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+    
+    .opp-profit {
+        margin: 0;
+        align-self: center;
+    }
+}
+
+/* Animation Keyframes */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideIn {
+    from { 
+        transform: translateY(-50px);
+        opacity: 0;
+    }
+    to { 
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Loading Spinner for Charts */
+.chart-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 200px;
+    font-size: 18px;
+    color: #7F8C8D;
+}
+
+.spinner {
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #3498DB;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    animation: spin 1s linear infinite;
+    margin-right: 15px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Enhanced Tooltips */
+.chart-tooltip {
+    background: rgba(0, 0, 0, 0.9) !important;
+    border-radius: 8px !important;
+    padding: 12px !important;
+    font-size: 13px !important;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3) !important;
+}
+
+/* Performance optimizations */
+.heatmap-cell, .correlation-cell {
+    contain: layout style paint;
+}
+
+.chart-container {
+    contain: layout;
+}
