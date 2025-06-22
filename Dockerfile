@@ -23,10 +23,14 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy application code
 COPY src/ ./src/
-COPY modules/ ./modules/
-COPY utils/ ./utils/
 COPY config/ ./config/
+COPY utils/ ./utils/
 COPY *.py ./
+COPY scripts/ ./scripts/
+COPY .env.template ./
+
+# Make scripts executable
+RUN chmod +x scripts/*.sh
 
 # Create non-root user for security
 RUN groupadd -r appuser && useradd -r -g appuser appuser

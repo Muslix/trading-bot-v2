@@ -26,9 +26,11 @@ wheels/
 .installed.cfg
 *.egg
 
-# Environment files
+# Environment files (keep .env.template)
 .env
 .env.local
+.env.production
+.env.test
 .env.*.local
 
 # IDE files
@@ -46,10 +48,12 @@ Thumbs.db
 logs/
 *.log
 
-# Test files
+# Test files (but keep requirements-dev.txt)
 tests/
-test_*.py
-*_test.py
+htmlcov/
+.pytest_cache/
+.coverage
+*.coverage
 
 # Database files (will be mounted as volume)
 *.db
@@ -60,19 +64,17 @@ test_*.py
 *.bak
 *_backup.py
 
-# Documentation
-*.md
+# Documentation (keep README.md)
 docs/
+*.backup
+*.bak
 
-# CI/CD files
-Makefile
-Makefile.backup
+# CI/CD files (keep essential scripts)
 .github/
+Makefile.backup
 
-# Deployment scripts
+# Deployment scripts (keep scripts/ folder)
 deployment/
-scripts/
-*.sh
 
 # Temporary files
 tmp/
