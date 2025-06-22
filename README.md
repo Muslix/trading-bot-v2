@@ -366,3 +366,23 @@ MIT License - Siehe LICENSE Datei
 
 # Expected output: "✅ Security audit passed!"
 ```
+
+### Dependency Management
+- **Always Latest**: Uses `>=` for automatic updates to latest compatible versions
+- **Security First**: Automatic security updates included
+- **Development Tools**: Separate `requirements-dev.txt` for development dependencies
+
+### Quick Commands
+```bash
+# Update all dependencies to latest versions
+make update-deps
+
+# Install development tools
+make install-dev
+
+# Freeze current versions (for production)
+make freeze-deps
+
+# Manual update
+./scripts/update_dependencies.sh
+```

@@ -1,0 +1,31 @@
+# Development Dependencies - Always Latest
+# These dependencies are only needed for development and testing
+
+# Enhanced testing tools
+pytest-xdist>=3.5.0         # Parallel test execution
+pytest-benchmark>=4.0.0     # Performance benchmarking  
+pytest-mock>=3.12.0         # Enhanced mocking
+pytest-html>=4.1.0          # HTML test reports
+pytest-sugar>=1.0.0         # Better test output
+
+# Code quality tools
+black>=23.0.0                # Code formatter
+flake8>=6.0.0               # Linting
+mypy>=1.7.0                 # Type checking
+isort>=5.12.0               # Import sorting
+bandit>=1.7.5               # Security linting
+
+# Development utilities
+ipython>=8.17.0             # Enhanced REPL
+jupyter>=1.0.0              # Notebooks for analysis
+pre-commit>=3.5.0           # Git hooks
+safety>=3.0.0               # Security vulnerability scanning
+
+# Documentation
+sphinx>=7.2.0               # Documentation generator
+sphinx-rtd-theme>=1.3.0     # ReadTheDocs theme
+
+# Monitoring and profiling
+memory-profiler>=0.61.0     # Memory usage profiling
+line-profiler>=4.1.0        # Line-by-line profiling
+py-spy>=0.3.14              # Sampling profiler

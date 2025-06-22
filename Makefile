@@ -315,6 +315,19 @@ all: ## 🎯 Full workflow (setup -> test -> run)
 	@$(MAKE) test
 	@$(MAKE) run
 
+update-deps: ## 🔄 Update all dependencies to latest versions
+	@echo "🔄 Updating dependencies to latest versions..."
+	./scripts/update_dependencies.sh
+
+install-dev: ## 🛠️ Install development dependencies
+	@echo "🛠️ Installing development dependencies..."
+	pip install -r requirements-dev.txt
+
+freeze-deps: ## 📋 Freeze current dependency versions
+	@echo "📋 Freezing current dependency versions..."
+	pip freeze > requirements-frozen.txt
+	@echo "✅ Dependencies frozen to requirements-frozen.txt"
+
 # =============================================================================
 # CODE QUALITY & TESTING
 # =============================================================================
