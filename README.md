@@ -335,3 +335,34 @@ MIT License - Siehe LICENSE Datei
 **Status**: ✅ Production Ready | 📈 Actively Maintained | 🚀 High Performance
 
 *Last Updated: June 16, 2025*
+
+## 🔐 Security & Configuration
+
+### Environment Setup
+1. **Copy the template**: `cp .env.template .env`
+2. **Configure your credentials** (never commit .env to git):
+   ```bash
+   # Telegram Bot Configuration
+   TELEGRAM_BOT_TOKEN=your_actual_bot_token
+   TELEGRAM_CHAT_ID=your_actual_chat_id
+   
+   # Exchange API Keys (if using live trading)
+   BINANCE_API_KEY=your_actual_api_key
+   BINANCE_SECRET_KEY=your_actual_secret_key
+   ```
+
+### Security Best Practices
+- ✅ All sensitive files are gitignored (`.env`, `*token*`, `*secret*`)
+- ✅ Use environment variables for all credentials
+- ✅ Run security audit: `./scripts/security_audit.sh`
+- ✅ Regular dependency updates with `make update-deps`
+- ✅ File permissions are automatically secured
+- ⚠️ **Never commit real API keys to version control**
+
+### Security Audit
+```bash
+# Run comprehensive security check
+./scripts/security_audit.sh
+
+# Expected output: "✅ Security audit passed!"
+```
